@@ -8,13 +8,16 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using BookStore.DAL.Repositories.Interfaces;
 
 namespace BookStore.DAL.Repositories.Realizations.Base
 {
-    public abstract class RepositoryBase<T> : IRepositoryBase<T>
+    public abstract class RepositoryBase<T> : IRepositoryBase<T>, IStreetcodeDbContextProvider
         where T : class
     {
         BookStoreDbContext _db;
+
+        public BookStoreDbContext BookStoreDb { init => _db = value; }
 
         protected RepositoryBase()
         {

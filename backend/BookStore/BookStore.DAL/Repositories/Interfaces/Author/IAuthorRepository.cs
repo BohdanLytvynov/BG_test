@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.DAL.Repositories.Interfaces.Authors
 {
-    public interface IAuthorRepository : IRepositoryBase<Author>
+    public interface IAuthorRepository : IRepositoryBase<Author>, IStreetcodeDbContextProvider
     {
     }
 }
