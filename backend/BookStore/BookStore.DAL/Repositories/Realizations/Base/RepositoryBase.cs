@@ -16,6 +16,11 @@ namespace BookStore.DAL.Repositories.Realizations.Base
     {
         BookStoreDbContext _db;
 
+        protected RepositoryBase()
+        {
+            
+        }
+
         protected RepositoryBase(BookStoreDbContext db)
         {
             _db = db;
