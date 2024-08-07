@@ -17,6 +17,8 @@ namespace BookStore.DAL.Persistence.Configurations.Authors
             builder.Property(x => x.Name).IsRequired().HasMaxLength(20).HasColumnType("VARCHAR(20)");
             builder.Property(x => x.Surename).IsRequired().HasMaxLength(20).HasColumnType("VARCHAR(20)");
             builder.Property(x => x.BirthDate).IsRequired().HasColumnType("DATE");
+
+            builder.HasMany<Book>().WithOne(x => x.Author).HasForeignKey(x => x.AuthorId);
         }
     }
 }

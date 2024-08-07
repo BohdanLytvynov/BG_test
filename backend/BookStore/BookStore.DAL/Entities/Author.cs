@@ -15,5 +15,7 @@ namespace BookStore.DAL.Entities
         public string? Surename { get; set; }
 
         public DateOnly? BirthDate { get; set; }
+
+        public  IEnumerable<Book>? Books { get; set; }
     }
 }

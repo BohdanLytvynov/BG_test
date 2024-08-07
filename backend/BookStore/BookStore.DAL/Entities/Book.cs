@@ -15,5 +15,9 @@ namespace BookStore.DAL.Entities
         public DateOnly? PubDate { get; set; }
 
         public string? Genre { get; set; }
+
+        public Author? Author { get; set; }
+
+        public int AuthorId { get; set; }
     }
 }
