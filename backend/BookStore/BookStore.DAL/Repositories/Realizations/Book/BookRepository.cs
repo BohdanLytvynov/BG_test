@@ -14,9 +14,6 @@ namespace BookStore.DAL.Repositories.Realizations.Books
     {
         public BookRepository(BookStoreDbContext context) : base(context) { }
 
-        public BookRepository() : base() { }
-        {
-            
-        }
+        public BookRepository() : base() { }       
     }
 }
