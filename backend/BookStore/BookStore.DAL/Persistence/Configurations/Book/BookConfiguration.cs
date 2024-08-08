@@ -13,10 +13,32 @@ namespace BookStore.DAL.Persistence.Configurations.Books
     {
         public void Configure(EntityTypeBuilder<Book> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(20).HasColumnType("VARCHAR(20)");
-            builder.Property(x => x.Genre).IsRequired().HasMaxLength(200).HasColumnType("VARCHAR");
-            builder.Property(x => x.PubDate).IsRequired().HasColumnType("DATE");
+            builder.ToTable("Books", "bookStore");
+
+            builder.HasKey(x => x.Id);                
+
+            builder.Property(x => x.Id)
+                .UseIdentityColumn()
+                .HasColumnName("book_id");
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasColumnType("TEXT")
+                .HasColumnName("title");   
+            
+            builder.Property(x => x.PubYear)
+                .IsRequired()
+                .HasColumnType("SMALLINT")
+                .HasColumnName("publication_year");
+
+            builder.HasMany(x => x.Book_Genres).WithOne(x => x.Book)
+                .HasForeignKey(x => x.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasMany(x => x.Book_Authors)
+                .WithOne(x => x.Book)
+                .HasForeignKey(x =>x.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

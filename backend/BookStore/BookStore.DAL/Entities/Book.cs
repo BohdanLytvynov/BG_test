@@ -10,14 +10,20 @@ namespace BookStore.DAL.Entities
     {
         public int Id { get; set; }
 
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public DateOnly? PubDate { get; set; }
+        public int PubYear { get; set; }
 
-        public string? Genre { get; set; }
+        #region Author Navigation Properties
 
-        public Author? Author { get; set; }
+        public List<Book_Author> Book_Authors { get; set; } = new();
 
-        public int AuthorId { get; set; }
+        #endregion
+
+        #region Genre Navigation Properties
+
+        public List<Book_Genre>? Book_Genres { get; set; } = new();
+
+        #endregion
     }
 }

@@ -12,10 +12,16 @@ namespace BookStore.DAL.Persistence.Configurations.Users
     internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
-        {
-            builder.HasKey(x => x.Id);
-            builder.Property(x =>x.Address).IsRequired().HasColumnType("VARCHAR");
-            builder.Property(x =>x.BirthDate).IsRequired().HasColumnType("DATE");
+        {                                     
+            builder.Property(x =>x.Address)
+                .IsRequired()
+                .HasColumnType("TEXT")
+                .HasColumnName("user_address");
+
+            builder.Property(x =>x.BirthDate)
+                .IsRequired()
+                .HasColumnType("DATE")
+                .HasColumnName("user_birth_date");
         }
     }
 }

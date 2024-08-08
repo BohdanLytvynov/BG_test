@@ -19,4 +19,8 @@
     <Folder Include="Behaviors\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookStore.DAL\BookStore.DAL.csproj" />
+  </ItemGroup>
+
 </Project>

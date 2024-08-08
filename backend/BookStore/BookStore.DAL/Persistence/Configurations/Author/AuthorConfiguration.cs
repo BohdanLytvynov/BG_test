@@ -13,12 +13,35 @@ namespace BookStore.DAL.Persistence.Configurations.Authors
     {
         public void Configure(EntityTypeBuilder<Author> builder)
         {
-            builder.HasKey(x => x.Id);
-            builder.Property(x => x.Name).IsRequired().HasMaxLength(20).HasColumnType("VARCHAR(20)");
-            builder.Property(x => x.Surename).IsRequired().HasMaxLength(20).HasColumnType("VARCHAR(20)");
-            builder.Property(x => x.BirthDate).IsRequired().HasColumnType("DATE");
+            builder.ToTable("Authors", "bookStore" );
 
-            builder.HasMany<Book>().WithOne(x => x.Author).HasForeignKey(x => x.AuthorId);
+            builder.HasKey(x => x.Id);            
+
+            builder.Property(x => x.Id)
+                .UseIdentityColumn()
+                .HasColumnName("author_id");                
+
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnType("TEXT")
+                .HasColumnName("author_name");
+
+            builder.Property(x => x.Surename)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnType("TEXT")
+                .HasColumnName("author_surename");
+
+            builder.Property(x => x.BirthDate)
+                .IsRequired()
+                .HasColumnType("DATE")
+                .HasColumnName("author_birth_date");
+
+            builder.HasMany(x => x.Book_Authors)
+                .WithOne(x => x.Author)
+                .HasForeignKey(x =>x.AuthorId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

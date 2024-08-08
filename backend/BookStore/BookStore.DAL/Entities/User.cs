@@ -9,9 +9,9 @@ namespace BookStore.DAL.Entities
 {
     public class User : IdentityUser<Guid>
     {
-        public string? Address { get; set; }
+        public string Address { get; set; }
 
-        public DateOnly? BirthDate { get; set; }
+        public DateOnly BirthDate { get; set; }
 
         public User()
         {
