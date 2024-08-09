@@ -1,6 +1,8 @@
 ﻿using BookStore.BLL.Dto.Author;
 using BookStore.BLL.MediatR.Authors.Create;
+using BookStore.BLL.MediatR.Authors.Delete;
 using BookStore.BLL.MediatR.Authors.GetAll;
+using BookStore.BLL.MediatR.Authors.GetById;
 using BookStore.BLL.MediatR.Authors.Update;
 using BookStore.WebApi.Controllers.Base;
 using MediatR;
@@ -23,6 +25,12 @@ namespace BookStore.WebApi.Controllers.Athors
             return HandleResult(await _mediator.Send(new GetAllAuthorsQuery()));
         }
 
+        [HttpGet("id:int")]
+        public async Task<IActionResult> Get(int id)
+        {
+            return HandleResult(await _mediator.Send(new GetAuthorByIdQuery(id)));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateAuthorDto dto)
         {
@@ -33,6 +41,12 @@ namespace BookStore.WebApi.Controllers.Athors
         public async Task<IActionResult> Update([FromBody] AuthorDto dto)
         {
             return HandleResult(await _mediator.Send(new UpdateAuthorCommand(dto)));
+        }
+
+        [HttpDelete("id:int")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            return HandleResult(await _mediator.Send(new DeleteAuthorCommand(id)));
         }
     }
 }

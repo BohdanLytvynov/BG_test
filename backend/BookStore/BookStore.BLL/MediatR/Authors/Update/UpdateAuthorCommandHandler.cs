@@ -33,7 +33,7 @@ namespace BookStore.BLL.MediatR.Authors.Update
 
                 if (await _repositoryWrapper.SaveChangesAsync() > 0)
                     return Result.Ok(true);
-                return Result.Fail(new Error("Fail to update Entity!"));
+                throw new Exception("Fail to Execute UPDATE script");
             }
             catch (Exception e)
             {

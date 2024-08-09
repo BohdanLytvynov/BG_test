@@ -1,14 +1,15 @@
 ﻿using BookStore.BLL.Behaviors.Validation;
 using BookStore.BLL.Dto.Author;
 using FluentResults;
-using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookStore.BLL.MediatR.Authors.Update
+namespace BookStore.BLL.MediatR.Authors.GetById
 {
-    public record UpdateAuthorCommand(AuthorDto dto) : IValidatableRequest<Result<bool>>;
+    public record GetAuthorByIdQuery(int id) : IValidatableRequest<Result<AuthorDto>>
+    {
+    }
 }

@@ -29,7 +29,7 @@ namespace BookStore.BLL.MediatR.Authors.Create
                 
                 if(await _repository.SaveChangesAsync() > 0)
                     return Result.Ok(true);
-                return Result.Fail(new Error("Fail to update Entity!"));
+                throw new Exception("Error when executing INSERT - script for Author.");
 
             }
             catch (Exception e)
