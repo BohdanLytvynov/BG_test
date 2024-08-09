@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookStore.BLL.MediatR.Author.GetAll
+namespace BookStore.BLL.MediatR.Authors.Update
 {
-    public record GetAllAuthorsQuery() : IRequest<Result<IEnumerable<AuthorDto>>>;    
+    public record UpdateAuthorCommand(AuthorDto dto) : IRequest<Result<bool>>;
 }

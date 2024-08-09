@@ -16,6 +16,11 @@ namespace BookStore.BLL.Mapping.Authors
             CreateMap<Author, AuthorDto>()
                 .ForSourceMember(x=>x.Book_Authors, conf=>conf.DoNotValidate())
                 .ReverseMap();
+
+            CreateMap<Author, CreateAuthorDto>()
+                .ForSourceMember(x =>x.Book_Authors, conf => conf.DoNotValidate())
+                .ForSourceMember(x => x.Id, conf => conf.DoNotValidate())
+                .ReverseMap();
         }
     }
 }

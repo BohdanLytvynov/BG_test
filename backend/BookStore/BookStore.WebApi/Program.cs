@@ -1,10 +1,12 @@
+using BookStore.BLL.Behaviors.Validation;
 using BookStore.BLL.Mapping.Authors;
-using BookStore.BLL.MediatR.Author.GetAll;
+using BookStore.BLL.MediatR.Authors.GetAll;
 using BookStore.DAL.Entities;
 using BookStore.DAL.Persistence;
 using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using BookStore.DAL.Repositories.Realizations.RepositoryWrapper;
 using BookStore.WebApi.Extensions;
+using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -52,6 +54,9 @@ builder.Services.AddMediatR(config =>
 
 //Add Mapper
 builder.Services.AddAutoMapper(typeof(AuthorProfile));
+
+//Add Validation Behavior
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

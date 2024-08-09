@@ -6,8 +6,12 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.Dto.Author
 {
-    public class AuthorDto : CreateAuthorDto
+    public class CreateAuthorDto
     {
-        public int Id { get; set; }                
+        public string Name { get; set; }
+
+        public string Surename { get; set; }
+
+        public DateOnly BirthDate { get; set; }
     }
 }

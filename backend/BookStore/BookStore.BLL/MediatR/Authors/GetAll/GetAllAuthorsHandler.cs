@@ -4,7 +4,7 @@ using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using FluentResults;
 using MediatR;
 
-namespace BookStore.BLL.MediatR.Author.GetAll
+namespace BookStore.BLL.MediatR.Authors.GetAll
 {
     public class GetAllAuthorsHandler : IRequestHandler<GetAllAuthorsQuery, Result<IEnumerable<AuthorDto>>>
     {
