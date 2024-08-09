@@ -37,11 +37,15 @@ namespace BookStore.WebApi.Extensions
 
             if (!db.Generes.Any())
             {
-                await db.Generes.AddAsync
+                await db.Generes.AddRangeAsync
                     (
                         new Genre()
                         { 
                             Name = "Scientific Literature"                            
+                        },
+                        new Genre()
+                        { 
+                            Name = "Fiction Literature"
                         }
                     );
 
@@ -50,6 +54,7 @@ namespace BookStore.WebApi.Extensions
 
             if (!db!.Authors.Any())
             {
+                //Add Jeffery Richner Books
                 var genre = db.Generes.FirstOrDefault(x =>x.Name.Equals("Scientific Literature"));
 
                 var Books = new List<Book>()
@@ -86,6 +91,41 @@ namespace BookStore.WebApi.Extensions
 
                     await db.Authors.AddAsync(a);
                 } 
+
+                await db.SaveChangesAsync();
+
+                //Add Kristian Hannah Books 
+                genre = db.Generes.FirstOrDefault(x => x.Name.Equals("Fiction Literature"));
+
+                Books = new List<Book>()
+                {
+                    new Book()
+                        {
+                            Name="The 4 Winds",
+                            PubYear=2021
+                        },
+                        new Book()
+                        {
+                            Name = "The Greate Alone",
+                            PubYear = 2023
+                        },                        
+                };
+
+                a = new Author()
+                {
+                    Name = "Kristin",
+                    Surename = "Hannah",
+                    BirthDate = new DateOnly(2002, 9, 24)
+                };
+
+                foreach (var book in Books)
+                {
+                    book.Book_Genres.Add(new Book_Genre() { Book = book, Genre = genre });
+
+                    a.Book_Authors.Add(new Book_Author() { Author = a, Book = book });
+
+                    await db.Authors.AddAsync(a);
+                }
 
                 await db.SaveChangesAsync();
             }

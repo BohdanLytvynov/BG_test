@@ -11,7 +11,8 @@ namespace BookStore.BLL.MediatR.Authors.Update
     {
         public UpdateAuthorCommandDtoValidation()
         {
-            RuleFor(x => x.dto.Id).NotEmpty().Must(x => x > 0);
+            RuleFor(x => x.dto.Id)
+                .NotEmpty().Must(x => x > 0);
 
             RuleFor(x => x.dto.Name)
                 .NotEmpty()

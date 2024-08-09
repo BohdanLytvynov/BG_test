@@ -10,6 +10,11 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using FluentValidation;
+using AutoMapper;
+using BookStore.BLL.Dto.Author;
+using BookStore.BLL.Dto.Book;
+using BookStore.BLL.Dto.Genre;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +62,9 @@ builder.Services.AddAutoMapper(typeof(AuthorProfile));
 
 //Add Validation Behavior
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+
+//Add Validators
+builder.Services.AddValidatorsFromAssemblyContaining(typeof(GetAllAuthorsQuery));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

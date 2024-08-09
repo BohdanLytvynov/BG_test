@@ -17,4 +17,9 @@
     <ProjectReference Include="..\BookStore.DAL\BookStore.DAL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MediatR\Books\Delete\" />
+    <Folder Include="MediatR\Books\Update\" />
+  </ItemGroup>
+
 </Project>

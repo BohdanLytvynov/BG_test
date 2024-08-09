@@ -12,12 +12,12 @@ using BookStore.DAL.Repositories.Interfaces;
 
 namespace BookStore.DAL.Repositories.Realizations.Base
 {
-    public abstract class RepositoryBase<T> : IRepositoryBase<T>, IStreetcodeDbContextProvider
+    public abstract class RepositoryBase<T> : IRepositoryBase<T>, IBookStoreDbContextProvider
         where T : class
     {
         BookStoreDbContext _db;
 
-        public BookStoreDbContext BookStoreDb { init => _db = value; }
+        public BookStoreDbContext BookStoreDb { get => _db; init => _db = value; }
 
         protected RepositoryBase()
         {
@@ -50,19 +50,19 @@ namespace BookStore.DAL.Repositories.Realizations.Base
             _db.Set<T>().Update(entity);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync(
+        public async Task<IQueryable<T>> GetAllAsync(
         Expression<Func<T, bool>>? predicate = default,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
         {
-            return await GetQueryable(predicate, include).ToListAsync();
+            return await Task.FromResult(GetQueryable(predicate, include));
         }
 
-        public async Task<IEnumerable<T>?> GetAllAsync(
+        public async Task<IQueryable<T>> GetAllAsync(
             Expression<Func<T, T>> selector,
             Expression<Func<T, bool>>? predicate = default,
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
         {
-            return await GetQueryable(predicate, include, selector).ToListAsync() ?? new List<T>();
+            return await Task.FromResult(GetQueryable(predicate, include, selector));
         }
         
         public async Task<T?> GetSingleOrDefaultAsync(
@@ -85,6 +85,41 @@ namespace BookStore.DAL.Repositories.Realizations.Base
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default)
         {
             return await GetQueryable(predicate, include, selector).FirstOrDefaultAsync();
+        }
+
+        public async Task<IQueryable<TDbSet>> GetQueryableSet<TDbSet>
+            (Expression<Func<TDbSet, bool>>? predicate,
+        Func<IQueryable<TDbSet>, IIncludableQueryable<TDbSet, object>>? include,
+        Expression<Func<TDbSet, TDbSet>>? selector)
+            where TDbSet : class
+        {
+            return await Task.FromResult(GetQueryable<TDbSet>(predicate, include, selector));
+        }
+
+        private IQueryable<TDbSet> GetQueryable<TDbSet>(
+        Expression<Func<TDbSet, bool>>? predicate = default,
+        Func<IQueryable<TDbSet>, IIncludableQueryable<TDbSet, object>>? include = default,
+        Expression<Func<TDbSet, TDbSet>>? selector = default)
+            where TDbSet : class
+        {
+            var query = _db.Set<TDbSet>().AsNoTracking();
+
+            if (include is not null)
+            {
+                query = include(query);
+            }
+
+            if (predicate is not null)
+            {
+                query = query.Where(predicate);
+            }
+
+            if (selector is not null)
+            {
+                query = query.Select(selector);
+            }
+
+            return query.AsNoTracking();
         }
 
         private IQueryable<T> GetQueryable(
