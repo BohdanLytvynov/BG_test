@@ -37,7 +37,7 @@ namespace BookStore.DAL.Persistence
 
         public DbSet<Genre> Generes { get; set; }
 
-        public DbSet<Book_Genre> Book_Generrs { get; set; }
+        public DbSet<Book_Genre> Book_Geners { get; set; }
 
         public DbSet<Book_Author> Book_Author { get; set; }
 

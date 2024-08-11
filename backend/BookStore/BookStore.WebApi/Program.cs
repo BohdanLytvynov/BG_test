@@ -9,12 +9,11 @@ using BookStore.WebApi.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 using FluentValidation;
-using AutoMapper;
-using BookStore.BLL.Dto.Author;
-using BookStore.BLL.Dto.Book;
-using BookStore.BLL.Dto.Genre;
+using BookStore.BLL.Services.CookieServices.Realizations;
+using BookStore.BLL.Services.CookieServices.Interfaces;
+using BookStore.BLL.Services.TokenServices.Interfaces;
+using BookStore.BLL.Services.TokenServices.Realizations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,20 +29,19 @@ builder.Services.AddDbContext<BookStoreDbContext>(conf =>
     }
 
     var conStr = builder.Configuration.GetSection(env).GetConnectionString("BookStoreDb");
-
-    Debug.WriteLine(conStr);
-
+    
     conf.UseNpgsql(conStr);
 
 });
+
 // Add Identity System
 builder.Services.AddIdentity<User, IdentityRole<Guid>>(conf =>
-{ 
-    conf.User.RequireUniqueEmail = true;
-    conf.Password.RequiredLength = 7;
-}).AddEntityFrameworkStores<BookStoreDbContext>()
-.AddDefaultTokenProviders()
-.AddApiEndpoints();
+ {
+     conf.Password.RequiredLength = 7;
+     // Add here more configuration for Identity System
+
+ }).AddEntityFrameworkStores<BookStoreDbContext>()
+ .AddDefaultTokenProviders();
 
 //Add Repository Wrapper as a Service
 
@@ -63,6 +61,13 @@ builder.Services.AddAutoMapper(typeof(AuthorProfile));
 //Add Validation Behavior
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
+//Add JWTToken Configuration
+builder.Services.AddJWTTokenConfiguration(builder.Configuration);
+
+//Add Token Service
+builder.Services.AddSingleton<ICookieService, CookieService>();
+builder.Services.AddScoped<ITokenService, JWTTokenSevice>();
+
 //Add Validators
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(GetAllAuthorsQuery));
 
@@ -71,9 +76,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Add Authorization
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication();
+
+var policy = "default";
+
+//Add CORS
+builder.Services.EnableCORS(builder.Configuration, policy);
+
+builder.Services.AddHttp_ContextAccessor();
+
 var app = builder.Build();
 
-await app.SeedDatabaseAsync();
+//await app.SeedDatabaseAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -83,6 +99,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(policy);
 
 app.UseAuthorization();
 

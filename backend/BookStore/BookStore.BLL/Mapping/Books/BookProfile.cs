@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using BookStore.BLL.Dto.Book;
+using BookStore.BLL.ValueResolvers;
+using BookStore.DAL.Entities;
 
 namespace BookStore.BLL.Mapping.Books
 {
@@ -7,8 +10,8 @@ namespace BookStore.BLL.Mapping.Books
 
         public BookProfile()
         {
-            //CreateMap<Book_Author, BookDto>()
-            //    .ForPath(x=>x.)
+            //CreateMap<Book, BookDto>()
+            //    .ForMember(x => x.Authors, conf => conf.MapFrom());
             
         }
     }

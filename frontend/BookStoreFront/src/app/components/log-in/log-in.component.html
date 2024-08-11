@@ -1,0 +1,21 @@
+<div [ngClass]="show ? 'login show' : 'login hide'">
+  <div class="form">
+    <input 
+      type="text" 
+      [(ngModel)]="nickname" 
+      name="nickname"
+      placeholder="login" 
+      class="form-input">
+    <input 
+      type="password" 
+      [(ngModel)]="password"
+      name="password"
+      placeholder="password" 
+      class="form-input">
+    <div class="btn-box">
+      <button class="btn" (click)="handleLogIn()">Submit</button>
+      <button class="btn" (click)="handleClean()">Clean</button>
+    </div>
+  </div>
+  <button class="closeBtn" (click)="handleClose(false)"></button>
+</div>

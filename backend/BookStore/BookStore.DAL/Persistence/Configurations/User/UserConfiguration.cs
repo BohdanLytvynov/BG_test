@@ -12,7 +12,19 @@ namespace BookStore.DAL.Persistence.Configurations.Users
     internal class UserConfiguration : IEntityTypeConfiguration<User>
     {
         public void Configure(EntityTypeBuilder<User> builder)
-        {                                     
+        {
+            builder.Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnType("VARCHAR(50)")
+                .HasColumnName("user_firstname");
+
+            builder.Property(x => x.Surename)
+                .IsRequired()
+                .HasMaxLength(50)
+                .HasColumnType("VARCHAR(50)")
+                .HasColumnName("user_lastname");
+
             builder.Property(x =>x.Address)
                 .IsRequired()
                 .HasColumnType("TEXT")

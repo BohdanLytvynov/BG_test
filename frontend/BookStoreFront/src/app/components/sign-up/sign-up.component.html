@@ -1,0 +1,45 @@
+<div [ngClass]="show ? 'signup show' : 'signup hide'">
+  <div class="form">
+    <input 
+      type="text" 
+      [(ngModel)]="nickname" 
+      name="nickname" 
+      placeholder="your nickname or login" 
+      class="form-input">
+    <input 
+      type="password" 
+      [(ngModel)]="password" 
+      name="password" 
+      placeholder="create a password" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="name" 
+      name="name" 
+      placeholder="your name" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="surename" 
+      name="surename" 
+      placeholder="your surename" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="birthday" 
+      name="birthday" 
+      placeholder="your birthday" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="address" 
+      name="address" 
+      placeholder="your address" 
+      class="form-input">
+    <div class="btn-box">
+      <button (click)="addUser()" class="btn">Submit</button>
+      <!-- <button (click)="handleClean()" class="btn">Clean</button> -->
+    </div>
+  </div>
+  <button class="closeBtn" (click)="handleClose(false)"></button>
+</div>

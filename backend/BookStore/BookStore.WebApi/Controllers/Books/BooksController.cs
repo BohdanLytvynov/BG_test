@@ -1,4 +1,5 @@
 ﻿using BookStore.BLL.Dto.Book;
+using BookStore.BLL.MediatR.Books.Create;
 using BookStore.BLL.MediatR.Books.GetAll;
 using BookStore.BLL.MediatR.Books.GetById;
 using BookStore.WebApi.Controllers.Base;
@@ -32,7 +33,7 @@ namespace BookStore.WebApi.Controllers.Books
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBookDto dto)
         {
-            return HandleResult(await _mediator.Send());
+            return HandleResult(await _mediator.Send(new CreateBookCommand(dto)));
         }
     }
 }

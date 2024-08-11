@@ -24,12 +24,7 @@ namespace BookStore.DAL.Persistence.Configurations.Genres
             builder.Property(x => x.Name)
                 .IsRequired()
                 .HasColumnType("TEXT")
-                .HasColumnName("genre");
-
-            builder.HasMany(x => x.Book_Geners)
-                .WithOne(x => x.Genre)
-                .HasForeignKey(x => x.GenreId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasColumnName("genre");            
         }
     }
 }

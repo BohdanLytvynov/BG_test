@@ -17,6 +17,6 @@ namespace BookStore.BLL.Dto.Book
         
         public IEnumerable<CreateAuthorDto> Authors { get; set; }              
 
-        public IEnumerable<CreateGenreDto> Geners { get; set; }       
+        public IEnumerable<CreateGenreDto> Genres { get; set; }       
     }
 }

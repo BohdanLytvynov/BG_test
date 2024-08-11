@@ -1,6 +1,7 @@
 ﻿using BookStore.DAL.Entities;
 using BookStore.DAL.Enums;
 using BookStore.DAL.Persistence;
+using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -129,6 +130,18 @@ namespace BookStore.WebApi.Extensions
 
                 await db.SaveChangesAsync();
             }
+
+            //var bookrepo = serviceProvider.GetService<IRepositoryWrapper>()!.BookRepository;
+
+            //await bookrepo.AddBook(
+            //    new Book() { Name = "How Do Things Work", PubYear=2021 },
+            //    new List<Author>() { new Author() { Name = "Loui", Surename = "Blumfield", 
+            //        BirthDate= new DateOnly(1990, 02, 23)} },
+            //    new List<Genre>()
+            //    { new Genre() { Name = "Scientific Literature" }, new Genre() { Name = "Physics" } }
+            //    );
+
+            await db.SaveChangesAsync();
         }
 
         private async static Task SeedIdentity(IServiceProvider serviceProvider)

@@ -10,6 +10,6 @@ namespace BookStore.DAL.Repositories.Interfaces.Books
 {
     public interface IBookRepository : IRepositoryBase<Book>
     {
-        
+        public Task AddBook(Book book, IEnumerable<Author> authors, IEnumerable<Genre> genres);        
     }
 }

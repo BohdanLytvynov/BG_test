@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.Dto.Book
 {
-    public class BookDto : CreateAuthorDto
+    public class BookDto : CreateBookDto
     {
         public int Id { get; set; }        
     }

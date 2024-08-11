@@ -1,0 +1,33 @@
+<div [ngClass]="show ? 'author-form show' : 'author-form hide'">
+  <div class="form">
+    <input 
+      type="text" 
+      [(ngModel)]="authorID" 
+      name="authorID"
+      placeholder="identifier" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="authorName"
+      name="authorName"
+      placeholder="author's name" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="authorSureName" 
+      name="authorSureName"
+      placeholder="author's surename"
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="authorBirthday" 
+      name="authorBirthday"
+      placeholder="author's birthday"
+      class="form-input">
+    <div class="btn-box">
+      <button class="btn" (click)="addAuthor()">Add the Book</button>
+      <button class="btn" (click)="handleClean()">Clean</button>
+    </div>
+  </div>
+  <button class="closeBtn" (click)="handleClose(false)"></button>
+</div>

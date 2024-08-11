@@ -15,7 +15,15 @@ namespace BookStore.DAL.Persistence.Configurations.Book_Genres
         {
             builder.ToTable("Book_Geners","bookStore");
 
-            builder.HasKey(x => new { x.GenreId, x.BookId });            
+            builder.HasKey(x => new { x.GenreId, x.BookId });
+
+            builder.HasOne(bg => bg.Book)
+                .WithMany(b => b.Book_Genres)
+                .HasForeignKey(fk => fk.BookId);
+
+            builder.HasOne(bg => bg.Genre)
+                .WithMany(g => g.Book_Geners)
+                .HasForeignKey(fk => fk.GenreId);
         }
     }
 }

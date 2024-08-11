@@ -1,0 +1,33 @@
+<div [ngClass]="show ? 'books-form show' : 'books-form hide'">
+  <div class="form">
+    <input 
+      type="text" 
+      [(ngModel)]="bookID" 
+      name="bookID"
+      placeholder="identifier" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="bookName"
+      name="bookName"
+      placeholder="book title" 
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="bookYear" 
+      name="bookYear"
+      placeholder="year"
+      class="form-input">
+    <input 
+      type="text" 
+      [(ngModel)]="bookGenre" 
+      name="bookGenre"
+      placeholder="genre"
+      class="form-input">
+    <div class="btn-box">
+      <button class="btn" (click)="addBook()">Add the Book</button>
+      <button class="btn" (click)="handleClean()">Clean</button>
+    </div>
+  </div>
+  <button class="closeBtn" (click)="handleClose(false)"></button>
+</div>

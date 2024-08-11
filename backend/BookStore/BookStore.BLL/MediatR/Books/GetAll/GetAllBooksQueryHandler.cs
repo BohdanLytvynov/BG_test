@@ -32,35 +32,12 @@ namespace BookStore.BLL.MediatR.Books.GetAll
         public async Task<Result<IEnumerable<BookDto>>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
         {
             try
-            {
-                var temp = new List<BookDto>();
-
-                var Books_Author = await _repositoryWrapper.BookRepository
-                   .GetQueryableSet<Book_Author>(null, include => include.Include(x => x.Author)
-                   .Include(x => x.Book));
-
-                var Books_Gener = await _repositoryWrapper.BookRepository
-                   .GetQueryableSet<Book_Genre>(null, include => include.Include(x => x.Book)
-                   .Include(x => x.Genre));
-
-                var Authors = await _repositoryWrapper.AuthorRepository.GetAllAsync();
-                var Geners = await _repositoryWrapper.GenreRepository.GetAllAsync();
-
-                temp = Books_Author.Join(Books_Gener, x => x.BookId, y => y.BookId,
-                    (x, y) => new BookDto() 
-                    {
-                        Name = x.Book.Name,
-                        Id = x.Book.Id,
-                        PubYear = x.Book.PubYear,
-                        Authors = _mapper.Map<List<AuthorDto>>(
-                            Authors.Where(a => a.Id == x.AuthorId)),
-                        Genres = _mapper.Map<List<GenreDto>>(
-                            Geners.Where(g => g.Id == y.GenreId)
-                            )
-                    }
-                    ).ToList();
-
-                return Result.Ok(temp as IEnumerable<BookDto>);
+            {                                              
+                var Books = (await _repositoryWrapper.BookRepository.GetAllAsync())
+                .Include(b => b.Book_Authors).ThenInclude(ba => ba.Author)
+                .Include(b => b.Book_Genres).ThenInclude(bg => bg.Genre);
+                
+                return Result.Ok(_mapper.Map<IEnumerable<BookDto>>(Books));
             }
             catch (Exception e)
             {

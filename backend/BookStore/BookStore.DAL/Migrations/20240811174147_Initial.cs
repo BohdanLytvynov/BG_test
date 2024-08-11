@@ -34,6 +34,8 @@ namespace BookStore.DAL.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    user_firstname = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
+                    user_lastname = table.Column<string>(type: "VARCHAR(50)", maxLength: 50, nullable: false),
                     user_address = table.Column<string>(type: "TEXT", nullable: false),
                     user_birth_date = table.Column<DateOnly>(type: "DATE", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -118,6 +120,26 @@ namespace BookStore.DAL.Migrations
                         name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccessTokenId",
+                columns: table => new
+                {
+                    access_token_guid_id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    AccessTokenGUID = table.Column<Guid>(type: "UUID", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccessTokenId", x => x.access_token_guid_id);
+                    table.ForeignKey(
+                        name: "FK_AccessTokenId_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -262,6 +284,11 @@ namespace BookStore.DAL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_AccessTokenId_UserId",
+                table: "AccessTokenId",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
                 column: "RoleId");
@@ -314,6 +341,9 @@ namespace BookStore.DAL.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AccessTokenId");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

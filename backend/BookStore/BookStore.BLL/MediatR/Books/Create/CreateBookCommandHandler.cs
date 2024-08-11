@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.Configuration.Annotations;
+using BookStore.DAL.Entities;
 using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using FluentResults;
 using MediatR;
@@ -23,18 +25,28 @@ namespace BookStore.BLL.MediatR.Books.Create
             _mapper = mapper;
         }
 
-        public Task<Result<bool>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+        public async Task<Result<bool>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var dto = request.Dto;
+                var bookRepo = _repositoryWrapper.BookRepository;
 
-                var books_author = 
+                bookRepo.AddBook(new Book()
+                { 
+                    Name = request.Dto.Name,
+                    PubYear = request.Dto.PubYear,                    
+                }, _mapper.Map<IEnumerable<Author>>(request.Dto.Authors),
+                    _mapper.Map<IEnumerable<Genre>>(request.Dto.Genres));
+
+                if (await _repositoryWrapper.SaveChangesAsync() > 0)
+                {
+                    return Result.Ok(true);
+                }
+                throw new Exception("Something goes wrong when trying to save new Book!");
             }
             catch (Exception e)
             {
-
-                throw;
+                return Result.Fail(new Error(e.Message));               
             }
         }
     }
