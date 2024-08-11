@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { authors, books, users, currentUser } from '../data/mockData';
-import { Author, Book, User } from '../interfaces/intefaces';
+import { Author, Book, RegisterResponse, User } from '../interfaces/intefaces';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -38,24 +38,17 @@ export class DataService {
     return this.books.filter(item => item.bookID === id)[0];
   };
 
-  addUser(user: User) {
+  registerUser(user: User) : RegisterResponse {
     this.users.push(user);
-    this.currentUser.nickname = user.nickname;
-    this.currentUser.password = user.password;
-    this.currentUser.name = user.name;
-    this.currentUser.surename = user.surename;
-    this.currentUser.birthday = user.birthday;
-    this.currentUser.address = user.address;
+        
+    let responceObj : RegisterResponse = { success: false };
 
-    console.log("Start transmiting Data");
-
-    console.log(user);
-
-    this.httpClient.post("https://localhost:7230/api/Accounts/Register", user, 
+    this.httpClient.post<RegisterResponse>(this.ApiRequest + "Accounts/Register", user, 
       { 
         headers: { "Content-Type": "application/json" } 
-      }).subscribe( response => { console.log(response) } );
- 
+      }).subscribe( response => { responceObj = response } );
+      
+      return responceObj;
   };
 
   getCurrentUser() {
