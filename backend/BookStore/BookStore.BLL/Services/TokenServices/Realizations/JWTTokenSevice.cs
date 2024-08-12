@@ -32,27 +32,26 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
         }
 
         private string GenerateAccessToken(User user, List<Claim> claims)
-        {           
+        {
             if (!claims.Any())
             {
                 throw new ArgumentNullException("Claims not exists!");
             }
-
-            var expiration = DateTime.UtcNow.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
+            var creation = DateTime.UtcNow;
+            var expiration = creation.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokensConfiguration.SecretKey!));
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-            JwtSecurityToken tokenGenerator = new(
-                issuer: _tokensConfiguration.Issuer,
-                audience: _tokensConfiguration.Audience,
-                claims: claims,
-                expires: expiration,
-                signingCredentials: signingCredentials);
-
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
-            var token = jwtSecurityTokenHandler.WriteToken(tokenGenerator);
-
-            return token;
+            var descriptor = new SecurityTokenDescriptor() {
+                Issuer = _tokensConfiguration.Issuer,
+                Audience = _tokensConfiguration.Audience,
+                Subject = new ClaimsIdentity(claims),               
+                IssuedAt = creation,
+                NotBefore = utcNow,
+                Expires = expiration,
+                SigningCredentials = signingCredentials
+            };
+            return new JwtSecurityTokenHandler().CreateEncodedJwt(descriptor);
         }
 
         private async Task<List<Claim>> GetUserClaimsAsync(User user, Action<List<Claim>> claimMod)
@@ -67,7 +66,8 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),//User Id            
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)), //Date of generation                                                                                         
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
+            new Claim(JwtRegisteredClaimNames.Exp, )//Date of generation                                                                                         
             new Claim(JwtRegisteredClaimNames.Name, user.UserName!), //Username
             new Claim(JwtRegisteredClaimNames.FamilyName, user.Surename),//Surename
             new Claim(JwtRegisteredClaimNames.GivenName, user.Name),//Name

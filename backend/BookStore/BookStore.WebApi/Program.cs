@@ -90,7 +90,7 @@ builder.Services.AddHttp_ContextAccessor();
 
 var app = builder.Build();
 
-//await app.SeedDatabaseAsync();
+await app.SeedDatabaseAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

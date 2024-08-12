@@ -7,6 +7,7 @@ import { ValidationService } from '../../services/validation/validation.service'
 import { AuthResponse, LoginUser } from '../../interfaces/intefaces';
 import { DataService } from '../../services/data-service/data.service';
 import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
+import { CookieService } from 'ngx-cookie-service';
 
 class UserLogIn {
   constructor(
@@ -28,7 +29,8 @@ export class LogInComponent extends ValidatorBase implements OnInit {
   constructor(private router: Router, 
     @Inject(ValidationService) private validService : ValidationService,
     @Inject(DataService) private dataService : DataService,
-    @Inject(DataExchangeService) private dataExchangeService : DataExchangeService
+    @Inject(DataExchangeService) private dataExchangeService : DataExchangeService,
+    @Inject(CookieService) private cookieService : CookieService
   ) 
   {
     super();
@@ -48,12 +50,7 @@ export class LogInComponent extends ValidatorBase implements OnInit {
   password: string = '';
 
   all_correct : boolean = false;
-
-  loginedUser = {
-    nickname: this.nickname,
-    password: this.password
-  }
-
+  
   handleLogIn() {
 
     if(!this.all_correct)
@@ -70,6 +67,11 @@ export class LogInComponent extends ValidatorBase implements OnInit {
             name : resp.name, surename : resp.surename
           , birthday : resp.birthday, password : '', nickname : resp.nickname,
             address : resp.address }
+
+            let cookies = this.cookieService.getAll();
+
+            this.handleClean();
+            this.router.navigate(["/main"]);
         }
       },
       err => 
@@ -77,20 +79,14 @@ export class LogInComponent extends ValidatorBase implements OnInit {
 
         }
     );
-
-    // action is here
-    console.log(this.loginedUser)
+            
     
-    this.handleClean();
-    this.router.navigate(["/main"]);
   };
 
   handleClean() {
     this.nickname = '';
     this.password = '';
-    this.loginedUser.nickname = '';
-    this.loginedUser.password = '';
-  }
+  }    
 
   loginChanged(value : string) : void
   {

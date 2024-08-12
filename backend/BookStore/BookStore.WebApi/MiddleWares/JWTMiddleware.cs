@@ -12,25 +12,19 @@ namespace BookStore.WebApi.MiddleWares
     public class JWTMiddleware 
     {
         private readonly RequestDelegate _requestDelegate;
-        private readonly UserManager<User> _userManager;
-        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly UserManager<User> userManager;        
         private readonly JWTTokenConfiguration _jwtTokenConfiguration;
-        private readonly ITokenService _jwtSevice;
+      
 
-        public JWTMiddleware(RequestDelegate requestDelegate,
-            UserManager<User> userManager,
-            JWTTokenConfiguration jWTTokenConfiguration,
-            RoleManager<IdentityRole<Guid>> roleManager,
-            ITokenService tokenService)
+        public JWTMiddleware(RequestDelegate requestDelegate,            
+            JWTTokenConfiguration jWTTokenConfiguration)
         {
-            _requestDelegate = requestDelegate;
-            _userManager = userManager;
-            _jwtTokenConfiguration = jWTTokenConfiguration;
-            _jwtSevice = tokenService;
-            _roleManager = roleManager;
+            _requestDelegate = requestDelegate;            
+            _jwtTokenConfiguration = jWTTokenConfiguration;                      
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context, UserManager<User> userManager, 
+            RoleManager<IdentityRole<Guid>> roleManager)
         {
             try
             {
@@ -69,12 +63,12 @@ namespace BookStore.WebApi.MiddleWares
                 var userId = claimsPrincipal.Claims.
                     FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Sub));
                 //Find user to be attached to httpContext
-                var user = await _userManager.FindByIdAsync(userId.Value);
+                var user = await this.userManager.FindByIdAsync(userId.Value);
 
                 //Check accessToken Id
 
                 var jti = claimsPrincipal.Claims
-                    .FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Jti)).Value;
+                    .FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Jti))!.Value;
 
                 if (user.AccessTokenIds.Where(x => x.AccessTokenGUID.Equals(Guid.Parse(jti)))
                     .Select(x => x.AccessTokenGUID).Count() == 0)//No accessToken Id!
@@ -84,9 +78,9 @@ namespace BookStore.WebApi.MiddleWares
 
                 //Check User Role
 
-                var role = claimsPrincipal.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role)).Value;
+                var role = claimsPrincipal.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))!.Value;
 
-                var roleCorrect = await _userManager.IsInRoleAsync(user, role);
+                var roleCorrect = await this.userManager.IsInRoleAsync(user, role);
                 if (!roleCorrect)
                     throw new Exception("Invalid Token!");
 

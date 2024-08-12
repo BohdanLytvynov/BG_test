@@ -193,7 +193,9 @@ namespace BookStore.WebApi.Extensions
                             Id = Guid.Parse(adminId),
                             EmailConfirmed = true,
                             Address = "Some address",
-                            BirthDate = new DateOnly(2002, 9, 12)
+                            BirthDate = new DateOnly(2002, 9, 12),
+                            Name = "AdminName",
+                            Surename = "AdminSurename"
 
                         }, adminPass);
                 }

@@ -37,6 +37,7 @@ namespace BookStore.WebApi.Extensions
                 {
                     builder.WithOrigins(origins)
                     .AllowAnyHeader()
+                    .AllowAnyMethod()
                     .AllowCredentials()                    ;
                 });
             });

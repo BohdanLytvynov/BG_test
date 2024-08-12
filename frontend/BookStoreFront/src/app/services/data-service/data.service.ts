@@ -13,7 +13,7 @@ export class DataService {
 
   private authors: Author[] = authors;
   private books: Book[] = books;
-        
+  private ApiHttp = "http://localhost:5154/api/";
   private ApiRequest : string = "https://localhost:7230/api/";
   private httpClient : HttpClient = inject(HttpClient);
 
@@ -36,17 +36,18 @@ export class DataService {
   };
 
   registerUser<T>(user: User) : Observable<T> {                    
-    return this.httpClient.post<T>(this.ApiRequest + "Accounts/Register", user, 
+    return this.httpClient.post<T>(this.ApiHttp + "Accounts/Register", user, 
       { 
         headers: { "Content-Type": "application/json" } 
       });          
   };
 
   loginUser<T>(user : LoginUser) : Observable<T>
-  {
-      return this.httpClient.post<T>(this.ApiRequest + "Accounts/Login", user,
+  {      
+      return this.httpClient.post<T>(this.ApiHttp + "Accounts/Login", user,
         {
-          headers: { "Content-Type": "application/json" }
+          headers: { "Content-Type": "application/json"},
+          withCredentials: true,           
         }
       );
   }

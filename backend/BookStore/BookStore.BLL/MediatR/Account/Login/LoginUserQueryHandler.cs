@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -69,25 +70,34 @@ namespace BookStore.BLL.MediatR.Account.Login
 
                 var newTokenGuid = Guid.NewGuid();
 
+                var tokenExists = _contextAccessor.HttpContext.Request.Cookies.TryGetValue("accessToken", out var token);
+
                 //Get Current Access Token
-                if (!_contextAccessor.HttpContext.Request.Cookies.TryGetValue("accessToken", out var token))
+                if (!tokenExists)
                 {
-                    throw new IncorrectAccessToken();
+                    //There is no AccessToken for this user
+                    user.AccessTokenIds.Add(new AccessTokenId() { User = user, AccessTokenGUID = newTokenGuid });
                 }
+                else
+                {
+                    //Update token in DB
 
-                //Update token in DB
+                    //Get Current token from Cookie
+                    var jti = _tokenService.GetUserClaimFromAccessToken(token, claimName: JwtRegisteredClaimNames.Jti);
 
-                //Get Current token from Cookie
-                var jti = _tokenService.GetUserClaimFromAccessToken(token, claimName: JwtRegisteredClaimNames.Jti);
-
-                if (string.IsNullOrEmpty(jti)) throw new Exception("Fail to get Data from accessToken!");
-                //Find old Token                                
-                var oldtoken = user.AccessTokenIds.FirstOrDefault(x => x.AccessTokenGUID.Equals(Guid.Parse(jti)));
-                //Remove old Token
-                user.AccessTokenIds.Remove(oldtoken);
-                //Set new token
-                user.AccessTokenIds.Add(new AccessTokenId() { User = user, AccessTokenGUID = newTokenGuid });
-
+                    if (string.IsNullOrEmpty(jti)) throw new Exception("Fail to get Data from accessToken!");
+                    //Find old Token                                
+                    var oldtoken = user.AccessTokenIds.FirstOrDefault(x => x.AccessTokenGUID.Equals(Guid.Parse(jti)));
+                    //if there is already token in DB - update it
+                    if (oldtoken is not null)
+                    {
+                        //Remove old Token
+                        user.AccessTokenIds.Remove(oldtoken);
+                        //Set new token
+                        user.AccessTokenIds.Add(new AccessTokenId() { User = user, AccessTokenGUID = newTokenGuid });
+                    }
+                }
+                              
                 //Generate new JWT Access Token
                 var tokenDto = await _tokenService.GenerateAccesToken(user, claims =>
                 {
@@ -103,10 +113,13 @@ namespace BookStore.BLL.MediatR.Account.Login
                     _contextAccessor!.HttpContext!.Response,
                     ("accessToken", tokenDto.AccessToken, new CookieOptions
                     {
-                        Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtTokenConfiguration.AccessTokenExpirationMinutes),
+                        Expires = DateTimeOffset.UtcNow.AddDays(1),
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.None
+                        SameSite = SameSiteMode.Strict,
+                        IsEssential = true,
+                        Domain = $"localhost",                        
+                        Path = "/"
                     }));
                 
                 await _usermanager.UpdateAsync(user);
