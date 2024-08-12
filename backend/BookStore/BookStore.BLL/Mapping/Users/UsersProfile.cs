@@ -27,6 +27,15 @@ namespace BookStore.BLL.Mapping.Users
                 .ForPath(x => x.surename, conf => conf.MapFrom(x => x.Surename))
                 .ForPath(x => x.birthday, conf => conf.MapFrom(x => x.BirthDate.ToShortDateString()))
                 .ForPath(x => x.address, conf => conf.MapFrom(x => x.Address));
+
+            CreateMap<User, AuthResponseDto>()
+                .ForPath(x => x.nickname, conf => conf.MapFrom(x => x.UserName))
+                .ForPath(x => x.surename, conf => conf.MapFrom(x => x.Surename))
+                .ForPath(x => x.name, conf => conf.MapFrom(x => x.Name))
+                .ForPath(x => x.address, conf => conf.MapFrom(x => x.Address))
+                .ForPath(x => x.birthday, conf => conf.MapFrom(x => x.BirthDate.ToShortDateString()))
+                .ForMember(x => x.status, conf => conf.Ignore());
+                            
         }
     }
 }

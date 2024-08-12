@@ -1,7 +1,8 @@
 import { inject, Injectable } from '@angular/core';
-import { authors, books, users, currentUser } from '../data/mockData';
-import { Author, Book, RegisterResponse, User } from '../interfaces/intefaces';
+import { authors, books, users, currentUser } from '../../data/mockData';
+import { Author, Book, AuthResponse, User, LoginUser } from '../../interfaces/intefaces';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +13,7 @@ export class DataService {
 
   private authors: Author[] = authors;
   private books: Book[] = books;
-  private users: User[] = users;
-  private currentUser: User = currentUser;
-
-  
-
+        
   private ApiRequest : string = "https://localhost:7230/api/";
   private httpClient : HttpClient = inject(HttpClient);
 
@@ -38,21 +35,20 @@ export class DataService {
     return this.books.filter(item => item.bookID === id)[0];
   };
 
-  registerUser(user: User) : RegisterResponse {
-    this.users.push(user);
-        
-    let responceObj : RegisterResponse = { success: false };
-
-    this.httpClient.post<RegisterResponse>(this.ApiRequest + "Accounts/Register", user, 
+  registerUser<T>(user: User) : Observable<T> {                    
+    return this.httpClient.post<T>(this.ApiRequest + "Accounts/Register", user, 
       { 
         headers: { "Content-Type": "application/json" } 
-      }).subscribe( response => { responceObj = response } );
-      
-      return responceObj;
+      });          
   };
 
-  getCurrentUser() {
-    return this.currentUser;
-  };
-
+  loginUser<T>(user : LoginUser) : Observable<T>
+  {
+      return this.httpClient.post<T>(this.ApiRequest + "Accounts/Login", user,
+        {
+          headers: { "Content-Type": "application/json" }
+        }
+      );
+  }
+  
 }

@@ -14,6 +14,7 @@ using BookStore.BLL.Services.CookieServices.Realizations;
 using BookStore.BLL.Services.CookieServices.Interfaces;
 using BookStore.BLL.Services.TokenServices.Interfaces;
 using BookStore.BLL.Services.TokenServices.Realizations;
+using BookStore.WebApi.MiddleWares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -103,6 +104,8 @@ app.UseHttpsRedirection();
 app.UseCors(policy);
 
 app.UseAuthorization();
+
+app.UseMiddleware<JWTMiddleware>();
 
 app.MapControllers();
 

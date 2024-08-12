@@ -1,7 +1,8 @@
 import { Component, Inject, OnChanges, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../../services/data-service/data.service';
 import { User } from '../../interfaces/intefaces';
+import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
 
 @Component({
   selector: 'app-profile-page',
@@ -23,11 +24,11 @@ export class ProfilePageComponent {
     address: ''
   };
 
-  constructor(@Inject(DataService) private dataService: DataService) {}
+  constructor(@Inject(DataExchangeService) private dataExchangeService: DataExchangeService) {}
 
   ngOnInit() {
-    this.currentUser = this.dataService.getCurrentUser();
-    console.log(this.dataService.getCurrentUser())
+    this.currentUser = this.dataExchangeService.CurrentUser;
+    console.log(this.dataExchangeService.CurrentUser)
   }
   
 }

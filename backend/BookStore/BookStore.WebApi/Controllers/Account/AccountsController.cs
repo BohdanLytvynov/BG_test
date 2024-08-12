@@ -1,4 +1,5 @@
 ﻿using BookStore.BLL.Dto.UserDto;
+using BookStore.BLL.MediatR.Account.Login;
 using BookStore.BLL.MediatR.Account.Register;
 using BookStore.BLL.MediatR.Account.RegisterCommands;
 using BookStore.WebApi.Controllers.Base;
@@ -23,6 +24,13 @@ namespace BookStore.WebApi.Controllers.Account
         public async Task<IActionResult> Register([FromBody] RegisterUserDto dto)
         {
             return HandleResult(await _mediator.Send(new RegisterUserCommand(dto)));
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] LoginUserDto loginUserDto)
+        {
+            return HandleResult(await _mediator.Send(new LoginUserQuery(loginUserDto)));
         }
     }
 }

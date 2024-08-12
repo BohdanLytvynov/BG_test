@@ -7,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookStore.BLL.MediatR.Account.RegisterCommands
+namespace BookStore.BLL.MediatR.Account.Login
 {
-    public record RegisterUserCommand(RegisterUserDto dto) : IValidatableRequest<Result<AuthResponseDto>>
+    public record LoginUserQuery(LoginUserDto Dto) : IValidatableRequest<Result<AuthResponseDto>>
     {
+
     }
 }

@@ -1,67 +1,97 @@
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
-import { DataService } from '../../services/data.service';
-import { User } from '../../interfaces/intefaces';
+import { NavigationExtras, Router } from '@angular/router';
+import { DataService } from '../../services/data-service/data.service';
+import { AuthResponse, ErrorResponce, User } from '../../interfaces/intefaces';
+import { ValidationService } from '../../services/validation/validation.service';
+import { ValidatorBase } from '../../services/validation/validation';
+import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { state } from '@angular/animations';
 
-// class User {
-//   constructor(
-//     public nickname: string,
-//     public password: string,
-//     public name: string,
-//     public surename: string,
-//     public birthday: string,
-//     public address: string
-//   ) {}
-// }
+
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [NgClass, FormsModule],
+  imports: [NgClass, FormsModule, CommonModule],
   providers: [DataService],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })
 
-export class SignUpComponent {
+export class SignUpComponent extends ValidatorBase implements OnInit {
 
   constructor(
     private router: Router, 
-    @Inject(DataService) private dataService: DataService
-  ) {}
+    @Inject(DataService) private dataService: DataService,
+    @Inject(ValidationService) private validService: ValidationService,
+    @Inject(DataExchangeService) private dataExchange: DataExchangeService    
+  )
+  {
+    super();
+    
+  }
+  ngOnInit(): void {
+    this.Init(7);    
+  }
 
+  @ViewChild('ButSubmit', { static: false }) SubButton! : ElementRef
   @Input() show = false;
   @Output() onChange = new EventEmitter<boolean>();
-
+  
   handleClose(value: boolean) {
     this.onChange.emit(value);
+    this.sign_up_display = true;
   };
-
+// fields
   nickname: string = '';
   password: string = '';
   name: string = '';
   surename: string = '';
   birthday: string = '';
   address: string = '';
+  password2: string = '';
+  
+  all_fields : boolean = false;
+  sign_up_display : boolean = true;
+  error : string = ''
 
-  addUser() {
-    const user: User = {
+  registerUser() {
+    if(!this.all_fields)
+      return;
+
+    let user: User = {
       nickname: this.nickname,
-      password: this.password,
+      password: this.password,      
       name: this.name,
       surename: this.surename,
       birthday: this.birthday,
       address: this.address
     };
-    
+           
     // action is here
-    this.dataService.addUser(user)
-    console.log(user)
+    this.dataService.registerUser<AuthResponse>(user).subscribe(
+      (resp)  => {
 
-    this.handleClean()
-    this.router.navigate(["/main"])
+        if(resp.status)//registration succeded
+        {                         
+          this.dataExchange.CurrentUser = 
+          {
+            nickname: resp.nickname,
+            surename : resp.surename,
+            name : resp.name,
+            address : resp.address,
+            birthday : resp.birthday,
+            password : ''
+          };
+          this.handleClean()        
+          this.router.navigate(["/main"])            
+        }        
+       }, (err) => {                              
+        this.router.navigateByUrl("/reg-fail");        
+      });                          
   };
 
   handleClean() {
@@ -73,4 +103,55 @@ export class SignUpComponent {
     this.address = ''
   }
 
+  // Validation
+  // Validate nickname
+  nicknameChanged(value : string)
+  {      
+    this.validArray[0] = this.validService.ValidateTextNotEmpty(value);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);    
+  }
+
+  pass1Changed(arg0: string) {
+    this.validArray[1] = this.validService.ValidateTextNotEmpty(arg0);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  pass2Changed(arg0: string) {
+    this.validArray[2] = this.validService.ValidateTextNotEmpty(arg0)
+    && this.password2 == this.password;
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  nameChanged(value: string)
+  {
+    this.validArray[3] = this.validService.ValidateText(value);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  surenameChanged(value : string)
+  {
+    this.validArray[4] = this.validService.ValidateText(value);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  birthDayChanged(value : string)
+  {
+    this.validArray[5] = this.validService.ValidateDate(value);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  addressChanged(value : string)
+  {
+    this.validArray[6] = this.validService.ValidateTextNotEmpty(value);
+    this.all_fields = super.CheckValidArray();
+    super.enableElement(this.all_fields, this.SubButton);
+  }
+
+  
 }

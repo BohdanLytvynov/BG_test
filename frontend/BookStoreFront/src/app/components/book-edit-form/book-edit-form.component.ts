@@ -1,7 +1,7 @@
 import { NgClass } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../../services/data-service/data.service';
 
 class Book {
   constructor(

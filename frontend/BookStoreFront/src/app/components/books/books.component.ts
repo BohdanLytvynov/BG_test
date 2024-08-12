@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { BookFormComponent } from '../book-form/book-form.component';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../../services/data-service/data.service';
 import { Book } from '../../interfaces/intefaces';
 import { BookEditFormComponent } from '../book-edit-form/book-edit-form.component';
 

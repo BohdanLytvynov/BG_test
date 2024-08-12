@@ -5,6 +5,7 @@
   --text-primary: #2d4b81;
   --bg-light: #dce4f5;
   --bg-dark: #2d4b81;
+  --bg-light-red : #FB717E
 }
 * {
   box-sizing: border-box;
@@ -83,6 +84,17 @@ p {
   color: var(--text-primary);
 }
 
+.btn-disabled{
+  border: 2px solid lightgray;
+  min-width: 160px;
+  padding: 8px;
+  font-size: 16px;
+  background: grey;
+  color: var(--text-light);
+  font-weight: 700;
+  transition: .2s;
+}
+
 .btn-box {
   width: 100%;
   display: flex;
@@ -103,9 +115,9 @@ p {
 
 .form-input {
   outline: none;
-  border: 2px solid var(--bg-dark);
+  border: 2px solid #2d4b81;
   background: var(--bg-light);
-  color: var(--bg-dark);
+  color: #2d4b81;
   font-size: 16px;
   padding: 8px;
   width: 100%;
@@ -166,4 +178,20 @@ p {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.error-input{
+  outline: none;
+  border: 3px solid red;
+  background: var(--bg-light-red);
+  color: white;
+  font-size: 16px;
+  padding: 8px;
+  width: 100%;
+}
+
+.error-msg
+{
+  color: red;
+  font-size: 16px;  
 }

@@ -20,3 +20,26 @@ export interface User {
   birthday: string;
   address: string;
 }
+
+export interface AuthResponse
+{
+  status : boolean;
+  address : string;
+  birthday : string;
+  name : string;
+  nickname : string;
+  surename : string;
+}
+
+export interface ErrorResponce
+{
+  message : string;
+  metadata: {};
+}
+
+export interface LoginUser
+{
+  nickname : string;
+  password : string;
+}
+

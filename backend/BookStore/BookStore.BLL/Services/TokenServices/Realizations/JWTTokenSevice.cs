@@ -32,12 +32,7 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
         }
 
         private string GenerateAccessToken(User user, List<Claim> claims)
-        {
-            if (user is null)
-            {
-                throw new ArgumentNullException(null, "User not found!");
-            }
-
+        {           
             if (!claims.Any())
             {
                 throw new ArgumentNullException("Claims not exists!");
@@ -61,16 +56,9 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
         }
 
         private async Task<List<Claim>> GetUserClaimsAsync(User user, Action<List<Claim>> claimMod)
-        {
-            if (user is null)
-            {
-                throw new ArgumentNullException(null, "User not found!");
-            }
-
+        {            
             var roles = await _userManager.GetRolesAsync(user);
-
-            roles = new [] { "User" }; // Remove it when integration testing will be finished
-
+            
             if (!roles.Any())
             {
                 throw new ArgumentNullException("Roles for User not found!");
@@ -79,9 +67,12 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),//User Id            
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)), //Date of generation                       
-            new Claim(ClaimTypes.Name, user.UserName!),            
-            new Claim(ClaimTypes.Role, roles.First())
+            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)), //Date of generation                                                                                         
+            new Claim(JwtRegisteredClaimNames.Name, user.UserName!), //Username
+            new Claim(JwtRegisteredClaimNames.FamilyName, user.Surename),//Surename
+            new Claim(JwtRegisteredClaimNames.GivenName, user.Name),//Name
+            new Claim (JwtRegisteredClaimNames.Birthdate, user.BirthDate.ToShortDateString()),//BirtDate
+            new Claim(ClaimTypes.Role, roles.First())//Role
         };
 
             if (claimMod is not null)
@@ -90,7 +81,7 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             return claims;
         }
         
-        private string? GetUserClaimFromAccessToken(string accessToken, string claimName)
+        public string? GetUserClaimFromAccessToken(string accessToken, string claimName)
         {            
             if (string.IsNullOrEmpty(accessToken))
             {

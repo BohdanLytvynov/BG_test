@@ -1,0 +1,109 @@
+﻿using BookStore.BLL.Services.TokenServices.Interfaces;
+using BookStore.BLL.Services.TokenServices.Realizations;
+using BookStore.DAL.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+
+namespace BookStore.WebApi.MiddleWares
+{
+    public class JWTMiddleware 
+    {
+        private readonly RequestDelegate _requestDelegate;
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+        private readonly JWTTokenConfiguration _jwtTokenConfiguration;
+        private readonly ITokenService _jwtSevice;
+
+        public JWTMiddleware(RequestDelegate requestDelegate,
+            UserManager<User> userManager,
+            JWTTokenConfiguration jWTTokenConfiguration,
+            RoleManager<IdentityRole<Guid>> roleManager,
+            ITokenService tokenService)
+        {
+            _requestDelegate = requestDelegate;
+            _userManager = userManager;
+            _jwtTokenConfiguration = jWTTokenConfiguration;
+            _jwtSevice = tokenService;
+            _roleManager = roleManager;
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            try
+            {
+                // Get Current JWT
+                context.Request.Cookies.TryGetValue("accessToken", out var token);
+                // JWT not found throw error
+                if(token is null)
+                    throw new NullReferenceException(nameof(token));
+                //AutoValidate JWT (Configure)
+                var tokenHandler = new JwtSecurityTokenHandler();
+
+                byte[] key = Encoding.ASCII.GetBytes
+                (_jwtTokenConfiguration.SecretKey);
+
+                var tokenValidationParams = new
+                TokenValidationParameters()
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new
+                    SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtTokenConfiguration.Issuer,
+                    ValidAudience = _jwtTokenConfiguration.Audience,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,                                        
+                };
+                //Vallidate JWT
+                var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParams, out var validatedToken);
+                var jwtToken =
+                (JwtSecurityToken)validatedToken;
+
+                if (claimsPrincipal is null)
+                    throw new Exception("Invalid Token!");
+
+                var userId = claimsPrincipal.Claims.
+                    FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Sub));
+                //Find user to be attached to httpContext
+                var user = await _userManager.FindByIdAsync(userId.Value);
+
+                //Check accessToken Id
+
+                var jti = claimsPrincipal.Claims
+                    .FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Jti)).Value;
+
+                if (user.AccessTokenIds.Where(x => x.AccessTokenGUID.Equals(Guid.Parse(jti)))
+                    .Select(x => x.AccessTokenGUID).Count() == 0)//No accessToken Id!
+                {
+                    throw new Exception("Invalid Token!");
+                }
+
+                //Check User Role
+
+                var role = claimsPrincipal.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role)).Value;
+
+                var roleCorrect = await _userManager.IsInRoleAsync(user, role);
+                if (!roleCorrect)
+                    throw new Exception("Invalid Token!");
+
+
+                //All checks have been passed!
+                context.Items["Role"] = role;
+                context.Items["User"] = user;                
+            }
+            catch (Exception e)
+            {
+                
+            }
+            finally
+            {
+                await _requestDelegate?.Invoke(context);
+            }
+            
+        }
+    }
+}

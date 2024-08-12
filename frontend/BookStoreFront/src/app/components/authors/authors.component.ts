@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { AuthorFormComponent } from '../author-form/author-form.component';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../../services/data-service/data.service';
 import { Author } from '../../interfaces/intefaces';
 import { AutorEditFormComponent } from '../author-edit-form/autor-edit-form.component';
 
