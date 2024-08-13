@@ -103,10 +103,10 @@ app.UseHttpsRedirection();
 
 app.UseCors(policy);
 
-app.UseAuthorization();
+app.MapControllers();
 
 app.UseMiddleware<JWTMiddleware>();
 
-app.MapControllers();
+app.UseAuthorization();// Must be definetly after JWTMiddleware 
 
 app.Run();

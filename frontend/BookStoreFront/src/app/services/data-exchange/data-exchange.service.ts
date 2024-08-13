@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import { ErrorResponce, User } from '../../interfaces/intefaces';
+import { ReqError, User } from '../../interfaces/intefaces';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DataExchangeService {
 
-  constructor() { }
-
-  public CurrentUser! : User;
-
-  public Errors! : string[];
+public userTransfer$ = new Subject<User>();
+public errorTransfer$ = new Subject<ReqError>();  
+  
 }

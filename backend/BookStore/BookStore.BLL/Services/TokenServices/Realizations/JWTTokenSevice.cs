@@ -19,15 +19,15 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
     public class JWTTokenSevice : ITokenService
     {
         private readonly UserManager<User> _userManager;
-        private readonly JWTTokenConfiguration _tokensConfiguration;        
+        private readonly JWTTokenConfiguration _tokensConfiguration;
         private readonly IMapper _mapper;
 
-        public JWTTokenSevice(UserManager<User> userManager, 
-            JWTTokenConfiguration tokensConfiguration, 
+        public JWTTokenSevice(UserManager<User> userManager,
+            JWTTokenConfiguration tokensConfiguration,
             IMapper mapper)
         {
             _userManager = userManager;
-            _tokensConfiguration = tokensConfiguration;            
+            _tokensConfiguration = tokensConfiguration;
             _mapper = mapper;
         }
 
@@ -37,41 +37,37 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             {
                 throw new ArgumentNullException("Claims not exists!");
             }
-            var creation = DateTime.UtcNow;
-            var expiration = creation.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
+
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(_tokensConfiguration.SecretKey!));
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var descriptor = new SecurityTokenDescriptor() {
+            var descriptor = new SecurityTokenDescriptor()
+            {
                 Issuer = _tokensConfiguration.Issuer,
                 Audience = _tokensConfiguration.Audience,
-                Subject = new ClaimsIdentity(claims),               
-                IssuedAt = creation,
-                NotBefore = utcNow,
-                Expires = expiration,
-                SigningCredentials = signingCredentials
+                Subject = new ClaimsIdentity(claims),
+                SigningCredentials = signingCredentials,                
             };
             return new JwtSecurityTokenHandler().CreateEncodedJwt(descriptor);
         }
 
         private async Task<List<Claim>> GetUserClaimsAsync(User user, Action<List<Claim>> claimMod)
-        {            
+        {
             var roles = await _userManager.GetRolesAsync(user);
-            
+
             if (!roles.Any())
             {
                 throw new ArgumentNullException("Roles for User not found!");
             }
 
+            var creation = DateTime.UtcNow;
+            var expiration = creation.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
+
             List<Claim> claims = new()
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),//User Id            
-            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString(CultureInfo.InvariantCulture)),
-            new Claim(JwtRegisteredClaimNames.Exp, )//Date of generation                                                                                         
-            new Claim(JwtRegisteredClaimNames.Name, user.UserName!), //Username
-            new Claim(JwtRegisteredClaimNames.FamilyName, user.Surename),//Surename
-            new Claim(JwtRegisteredClaimNames.GivenName, user.Name),//Name
-            new Claim (JwtRegisteredClaimNames.Birthdate, user.BirthDate.ToShortDateString()),//BirtDate
+            new Claim(JwtRegisteredClaimNames.Iat, creation.ToString(CultureInfo.InvariantCulture)),
+            new Claim(JwtRegisteredClaimNames.Exp, expiration.ToString(CultureInfo.InvariantCulture)),//Date of generation                                                                                                     
             new Claim(ClaimTypes.Role, roles.First())//Role
         };
 
@@ -80,9 +76,9 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
 
             return claims;
         }
-        
+
         public string? GetUserClaimFromAccessToken(string accessToken, string claimName)
-        {            
+        {
             if (string.IsNullOrEmpty(accessToken))
             {
                 throw new ArgumentNullException(null, "Invalid Token");
@@ -104,8 +100,8 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             var tokenResponse = new TokenResponseDTO();
             var userClaims = await GetUserClaimsAsync(user, claimMod);
             tokenResponse.AccessToken = GenerateAccessToken(user, userClaims);
-            
+
             return tokenResponse;
-        }        
+        }
     }
 }

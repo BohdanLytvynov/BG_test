@@ -7,9 +7,7 @@ using System.Threading.Tasks;
 namespace BookStore.BLL.Dto.UserDto
 {
     public class AuthResponseDto 
-    {
-        public bool status { get; set; }
-
+    {       
         public string address { get; set; }
 
         public string birthday { get; set; }

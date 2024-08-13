@@ -23,7 +23,6 @@ export interface User {
 
 export interface AuthResponse
 {
-  status : boolean;
   address : string;
   birthday : string;
   name : string;
@@ -31,15 +30,14 @@ export interface AuthResponse
   surename : string;
 }
 
-export interface ErrorResponce
-{
-  message : string;
-  metadata: {};
-}
-
 export interface LoginUser
 {
   nickname : string;
   password : string;
+}
+
+export interface ReqError{
+  error : string;
+  action : string;
 }
 

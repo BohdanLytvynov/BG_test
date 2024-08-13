@@ -1,8 +1,10 @@
-import { Component, Inject, OnChanges, OnInit } from '@angular/core';
+import { Component, Inject, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DataService } from '../../services/data-service/data.service';
 import { User } from '../../interfaces/intefaces';
 import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
+import { Subject, Subscription } from 'rxjs';
+import { currentUser } from '../../data/mockData';
 
 @Component({
   selector: 'app-profile-page',
@@ -12,7 +14,9 @@ import { DataExchangeService } from '../../services/data-exchange/data-exchange.
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
-export class ProfilePageComponent { 
+export class ProfilePageComponent implements OnInit { 
+
+  private subs! : Subscription;
 
   curentUserNickname: string = '';
   currentUser: User = {
@@ -24,11 +28,15 @@ export class ProfilePageComponent {
     address: ''
   };
 
-  constructor(@Inject(DataExchangeService) private dataExchangeService: DataExchangeService) {}
-
-  ngOnInit() {
-    this.currentUser = this.dataExchangeService.CurrentUser;
-    console.log(this.dataExchangeService.CurrentUser)
+  constructor(@Inject(DataExchangeService) private dataExchangeService: DataExchangeService) {
+    // this.dataExchangeService.userTransfer$
+    //  .subscribe((user) => this.currentUser = user)
   }
   
+  ngOnInit() {
+     this.subs = this.dataExchangeService.userTransfer$
+     .subscribe((user) => this.currentUser = user)
+  }
+    
+
 }

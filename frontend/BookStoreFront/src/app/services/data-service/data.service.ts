@@ -14,7 +14,7 @@ export class DataService {
   private authors: Author[] = authors;
   private books: Book[] = books;
   private ApiHttp = "http://localhost:5154/api/";
-  private ApiRequest : string = "https://localhost:7230/api/";
+  private ApiHttps : string = "https://localhost:7230/api/";
   private httpClient : HttpClient = inject(HttpClient);
 
   getAutors(): Author[] {
@@ -50,6 +50,15 @@ export class DataService {
           withCredentials: true,           
         }
       );
+  }
+
+  logoutUser() : Observable<object>
+  {
+    return this.httpClient.get(this.ApiHttp + "Accounts/LogOut", 
+      {
+        withCredentials: true,
+      }
+    );
   }
   
 }

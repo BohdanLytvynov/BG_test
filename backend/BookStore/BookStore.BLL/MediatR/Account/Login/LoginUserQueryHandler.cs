@@ -113,19 +113,19 @@ namespace BookStore.BLL.MediatR.Account.Login
                     _contextAccessor!.HttpContext!.Response,
                     ("accessToken", tokenDto.AccessToken, new CookieOptions
                     {
-                        Expires = DateTimeOffset.UtcNow.AddDays(1),
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(_jwtTokenConfiguration.AccessTokenExpirationMinutes),
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
                         IsEssential = true,
-                        Domain = $"localhost",                        
+                        Domain = $"{_contextAccessor.HttpContext.Request.Host.Host}",                        
                         Path = "/"
                     }));
                 
                 await _usermanager.UpdateAsync(user);
 
                 var responce = _mapper.Map<AuthResponseDto>(user);
-                responce.status = true;
+                
                 return Result.Ok(responce);
 
             }

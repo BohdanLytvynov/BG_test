@@ -1,6 +1,9 @@
 <div class="start-page">
     <div class="container">
-      <h1>Fail to register! Please try again!</h1>
+      <h1>Fail to {{error.action}}! One or more errors occured!!</h1>
+      <div>
+        <p class="error-msg">{{error.error}}</p>
+      </div>
       <div class="btn-box">
         <button class="btn" (click)="backToRegister()" #ButSubmit        
       >Back</button> 

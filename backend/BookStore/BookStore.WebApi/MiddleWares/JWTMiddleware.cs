@@ -2,6 +2,7 @@
 using BookStore.BLL.Services.TokenServices.Realizations;
 using BookStore.DAL.Entities;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,11 +12,9 @@ namespace BookStore.WebApi.MiddleWares
 {
     public class JWTMiddleware 
     {
-        private readonly RequestDelegate _requestDelegate;
-        private readonly UserManager<User> userManager;        
+        private readonly RequestDelegate _requestDelegate;             
         private readonly JWTTokenConfiguration _jwtTokenConfiguration;
       
-
         public JWTMiddleware(RequestDelegate requestDelegate,            
             JWTTokenConfiguration jWTTokenConfiguration)
         {
@@ -31,8 +30,8 @@ namespace BookStore.WebApi.MiddleWares
                 // Get Current JWT
                 context.Request.Cookies.TryGetValue("accessToken", out var token);
                 // JWT not found throw error
-                if(token is null)
-                    throw new NullReferenceException(nameof(token));
+                if (token is null)
+                    throw new Exception("No token in cookie!");
                 //AutoValidate JWT (Configure)
                 var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -50,7 +49,7 @@ namespace BookStore.WebApi.MiddleWares
                     ValidAudience = _jwtTokenConfiguration.Audience,
                     ValidateAudience = true,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.Zero,                                        
+                    ClockSkew = TimeSpan.Zero,
                 };
                 //Vallidate JWT
                 var claimsPrincipal = tokenHandler.ValidateToken(token, tokenValidationParams, out var validatedToken);
@@ -60,10 +59,13 @@ namespace BookStore.WebApi.MiddleWares
                 if (claimsPrincipal is null)
                     throw new Exception("Invalid Token!");
 
-                var userId = claimsPrincipal.Claims.
-                    FirstOrDefault(x => x.Type.Equals(JwtRegisteredClaimNames.Sub));
+                var userId = claimsPrincipal
+                    .FindFirstValue(ClaimTypes.NameIdentifier);
+
                 //Find user to be attached to httpContext
-                var user = await this.userManager.FindByIdAsync(userId.Value);
+                var user = await userManager.Users.Where(x => x.Id.Equals(Guid.Parse(userId)))
+                    .Include(x => x.AccessTokenIds).Select(x => x).FirstOrDefaultAsync();
+
 
                 //Check accessToken Id
 
@@ -80,19 +82,16 @@ namespace BookStore.WebApi.MiddleWares
 
                 var role = claimsPrincipal.Claims.FirstOrDefault(x => x.Type.Equals(ClaimTypes.Role))!.Value;
 
-                var roleCorrect = await this.userManager.IsInRoleAsync(user, role);
+                var roleCorrect = await userManager.IsInRoleAsync(user, role);
                 if (!roleCorrect)
                     throw new Exception("Invalid Token!");
 
 
                 //All checks have been passed!
                 context.Items["Role"] = role;
-                context.Items["User"] = user;                
+                context.Items["User"] = user;
             }
-            catch (Exception e)
-            {
-                
-            }
+            catch (Exception any) { }
             finally
             {
                 await _requestDelegate?.Invoke(context);

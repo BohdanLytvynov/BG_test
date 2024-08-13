@@ -4,10 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ValidatorBase } from '../../services/validation/validation';
 import { ValidationService } from '../../services/validation/validation.service';
-import { AuthResponse, LoginUser } from '../../interfaces/intefaces';
+import { AuthResponse, LoginUser, User } from '../../interfaces/intefaces';
 import { DataService } from '../../services/data-service/data.service';
 import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
 import { CookieService } from 'ngx-cookie-service';
+import { HttpResponse } from '@angular/common/http';
 
 class UserLogIn {
   constructor(
@@ -29,8 +30,7 @@ export class LogInComponent extends ValidatorBase implements OnInit {
   constructor(private router: Router, 
     @Inject(ValidationService) private validService : ValidationService,
     @Inject(DataService) private dataService : DataService,
-    @Inject(DataExchangeService) private dataExchangeService : DataExchangeService,
-    @Inject(CookieService) private cookieService : CookieService
+    @Inject(DataExchangeService) private dataExchangeService : DataExchangeService,   
   ) 
   {
     super();
@@ -58,29 +58,29 @@ export class LogInComponent extends ValidatorBase implements OnInit {
 
     let user : LoginUser = { nickname: this.nickname, password : this.password }
 
-    this.dataService.loginUser<AuthResponse>(user).subscribe(
-      (resp) =>
-      {          
-        if(resp.status)
-        {
-          this.dataExchangeService.CurrentUser = { 
-            name : resp.name, surename : resp.surename
-          , birthday : resp.birthday, password : '', nickname : resp.nickname,
-            address : resp.address }
+    // this.dataService.loginUser<AuthResponse>(user).subscribe(
+    //   (resp) =>
+    //   {                  
+    //       let authDto = resp!;
+    //       this.dataExchangeService.CurrentUser = { 
+    //         name : authDto.name, 
+    //         surename : authDto.surename
+    //       , birthday : authDto.birthday, 
+    //         password : '', 
+    //         nickname : authDto.nickname,
+    //         address : authDto.address }
+           
+    //         this.handleClean();
+    //         this.router.navigate(["/main"]);        
+    //   }      
+    // );
+            let u : User = { nickname: 'test', name: 'testName', surename:'surename',
+              birthday:'test', password : '', address : 'Some address'
+             }        
 
-            let cookies = this.cookieService.getAll();
-
+            this.dataExchangeService.userTransfer$.next(u);
             this.handleClean();
-            this.router.navigate(["/main"]);
-        }
-      },
-      err => 
-        {
-
-        }
-    );
-            
-    
+            this.router.navigate(["/main"]);   
   };
 
   handleClean() {

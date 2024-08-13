@@ -100,11 +100,14 @@ namespace BookStore.BLL.MediatR.Account.Register
                         Expires = DateTimeOffset.UtcNow.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes),
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.None
+                        SameSite = SameSiteMode.Strict,
+                        IsEssential = true,
+                        Domain = $"{_contextAccessor.HttpContext.Request.Host.Host}",
+                        Path = "/"
                     }));
 
                 var responce = _mapper.Map<AuthResponseDto>(user);
-                responce.status = true;
+                
                 return Result.Ok(responce);
 
             }            

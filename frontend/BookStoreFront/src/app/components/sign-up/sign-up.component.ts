@@ -3,12 +3,12 @@ import { CommonModule, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
 import { DataService } from '../../services/data-service/data.service';
-import { AuthResponse, ErrorResponce, User } from '../../interfaces/intefaces';
 import { ValidationService } from '../../services/validation/validation.service';
 import { ValidatorBase } from '../../services/validation/validation';
 import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
-import { HttpErrorResponse } from '@angular/common/http';
-import { state } from '@angular/animations';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
+import { AuthResponse, User } from '../../interfaces/intefaces';
+import { Subject } from 'rxjs';
 
 
 
@@ -34,7 +34,8 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
     
   }
   ngOnInit(): void {
-    this.Init(7);    
+    this.Init(7); 
+    //Add pipe for User Data Transmitting      
   }
 
   @ViewChild('ButSubmit', { static: false }) SubButton! : ElementRef
@@ -73,24 +74,20 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
            
     // action is here
     this.dataService.registerUser<AuthResponse>(user).subscribe(
-      (resp)  => {
-
-        if(resp.status)//registration succeded
-        {                         
-          this.dataExchange.CurrentUser = 
+      (resp)  => {                  
+          let u = 
           {
-            nickname: resp.nickname,
-            surename : resp.surename,
-            name : resp.name,
-            address : resp.address,
-            birthday : resp.birthday,
+            nickname: resp!.nickname,
+            surename : resp!.surename,
+            name : resp!.name,
+            address : resp!.address,
+            birthday : resp!.birthday,
             password : ''
           };
+          
+          this.dataExchange.userTransfer$.next(u);
           this.handleClean()        
-          this.router.navigate(["/main"])            
-        }        
-       }, (err) => {                              
-        this.router.navigateByUrl("/reg-fail");        
+          this.router.navigate(["/main"])                                      
       });                          
   };
 
