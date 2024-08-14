@@ -15,7 +15,8 @@
       (ngModelChange)="passwordChanged(pass.value)"
       [ngClass]=" validArray[1]? 'form-input' : 'error-input' ">
     <div class="btn-box">
-      <button [ngClass]="all_correct? 'btn' : 'btn-disabled' " (click)="handleLogIn()">Submit</button>
+      <button [ngClass]="all_correct? 'btn' : 'btn-disabled' " 
+      (click)="handleLogIn()">Submit</button>
       <button class="btn" (click)="handleClean()">Clean</button>
     </div>
   </div>

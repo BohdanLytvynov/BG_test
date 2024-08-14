@@ -1,24 +1,24 @@
 <div [ngClass]="show ? 'books-form show' : 'books-form hide'">
   <div class="form">
-    <p class="form-info">Edit the book with ID: {{book.bookID}}</p>
+    <p class="form-info">Edit the book with ID: {{book.id}}</p>
     <input 
       type="text" 
-      [(ngModel)]="book.bookName"
+      [(ngModel)]="book.name"
       name="bookName"
       placeholder="book title" 
       class="form-input">
     <input 
       type="text" 
-      [(ngModel)]="book.bookYear" 
+      [(ngModel)]="book.pubYear" 
       name="bookYear"
       placeholder="year"
       class="form-input">
-    <input 
+    <!-- <input 
       type="text" 
       [(ngModel)]="book.bookGenre" 
       name="bookGenre"
       placeholder="genre"
-      class="form-input">
+      class="form-input"> -->
     <div class="btn-box">
       <button class="btn" (click)="edidBook()">Submit</button>
     </div>

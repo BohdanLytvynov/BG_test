@@ -2,15 +2,7 @@ import { NgClass } from '@angular/common';
 import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data-service/data.service';
-
-class Book {
-  constructor(
-    public bookID: string,
-    public bookName: string,
-    public bookYear: string,
-    public bookGenre: string
-  ) {}
-}
+import { Book } from '../../interfaces/intefaces';
 
 @Component({
   selector: 'app-book-edit-form',
@@ -27,25 +19,25 @@ export class BookEditFormComponent {
   @Input() show = false;
   @Output() onChange = new EventEmitter<boolean>();
 
-  @Input() id = '';
+  @Input() id = -1;
 
   handleClose(value: boolean) {
     this.onChange.emit(value)
   };
 
   book: Book = {
-    bookID: '',
-    bookName: '',
-    bookYear: '',
-    bookGenre: ''
+    id: -1,
+    name: '',
+    pubYear: -1,
+    geners: []
   };
 
   ngOnInit() {
-    this.book = this.dataService.getBookByID(this.id);
+    //this.book = this.dataService.getBookByID(this.id);
   };
 
   ngOnChanges() {
-    this.book = this.dataService.getBookByID(this.id);
+    //this.book = this.dataService.getBookByID(this.id);
   };
 
   edidBook() {

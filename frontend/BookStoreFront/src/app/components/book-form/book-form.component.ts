@@ -1,15 +1,8 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
-class Book {
-  constructor(
-    public bookID: string,
-    public bookName: string,
-    public bookYear: string,
-    public bookGenre: string
-  ) {}
-}
+import { ValidationService } from '../../services/validation/validation.service';
+import { ValidatorBase } from '../../services/validation/validation';
 
 @Component({
   selector: 'app-book-form',
@@ -18,7 +11,7 @@ class Book {
   templateUrl: './book-form.component.html',
   styleUrl: './book-form.component.css'
 })
-export class BookFormComponent {
+export class BookFormComponent extends ValidatorBase implements OnInit  {
 
   @Input() show = false;
   @Output() onChange = new EventEmitter<boolean>();
@@ -26,27 +19,46 @@ export class BookFormComponent {
   handleClose(value: boolean) {
     this.onChange.emit(value)
   }
+  
+constructor(@Inject(ValidationService) private validation : ValidationService)
+{
+  super();
+}
+  ngOnInit(): void {
+    this.Init(3);
+  }
 
-  bookID: string = '';
   bookName: string = '';
   bookYear: string = '';
   bookGenre: string = '';
 
   addBook() {
-    const book = new Book(this.bookID, this.bookName, this.bookYear, this.bookGenre);
+    
 
-    // action is here
-    console.log(book);
+   
     
     this.handleClean();
     this.handleClose(false)
   }
 
   handleClean() {
-    this.bookID = '';
+    
     this.bookName = '';
     this.bookYear = '';
     this.bookGenre = '';
   }
+
+  //Validation 
+onBookNameChange(value : string)
+{
+
+}
+
+onBookYearChange(value : string)
+{
+
+}
+
+
 
 }

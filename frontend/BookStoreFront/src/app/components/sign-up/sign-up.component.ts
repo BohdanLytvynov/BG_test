@@ -84,8 +84,8 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
             birthday : resp!.birthday,
             password : ''
           };
-          
-          this.dataExchange.userTransfer$.next(u);
+
+          this.dataExchange.userTransfer = u;
           this.handleClean()        
           this.router.navigate(["/main"])                                      
       });                          

@@ -9,14 +9,20 @@
     @for (item of items; track $index) {
       <div class="card">
         <div class="card-info">
-          <p>Book's ID: {{item.bookID}}</p>
-          <p>Title: {{item.bookName}}</p>
-          <p>Year of publication: {{item.bookYear}}</p>
-          <p>Genre: {{item.bookGenre}}</p>
+          <p>Book's ID: {{item.id}}</p>
+          <p>Title: {{item.name}}</p>
+          <p>Year of publication: {{item.pubYear}}</p>
+          <p class="p-bold">Genres:</p>
+          <ul class="ul-book">
+              @for(g of item.geners; track $index)
+              {
+                <li>{{g.name}}</li>
+              }            
+          </ul>
         </div>
         <div class="card-btn-box">
-          <button class="btn" (click)="showBookEditFormComponent(item.bookID)">Edit Info</button>
-          <button class="btn" (click)="deleteBook(item.bookID)">Delete</button>
+          <button class="btn" (click)="showBookEditFormComponent(item.id)">Edit Info</button>
+          <button class="btn" (click)="deleteBook(item.id)">Delete</button>
         </div>
       </div>
     }

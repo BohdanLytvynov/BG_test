@@ -1,11 +1,5 @@
 <div [ngClass]="show ? 'books-form show' : 'books-form hide'">
-  <div class="form">
-    <input 
-      type="text" 
-      [(ngModel)]="bookID" 
-      name="bookID"
-      placeholder="identifier" 
-      class="form-input">
+  <div class="form">    
     <input 
       type="text" 
       [(ngModel)]="bookName"
@@ -24,6 +18,15 @@
       name="bookGenre"
       placeholder="genre"
       class="form-input">
+
+    <button class="btn">
+
+    </button>
+
+    <button class="btn">
+
+    </button>
+
     <div class="btn-box">
       <button class="btn" (click)="addBook()">Add the Book</button>
       <button class="btn" (click)="handleClean()">Clean</button>

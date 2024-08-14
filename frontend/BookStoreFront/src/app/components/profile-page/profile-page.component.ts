@@ -14,10 +14,8 @@ import { currentUser } from '../../data/mockData';
   templateUrl: './profile-page.component.html',
   styleUrl: './profile-page.component.css'
 })
-export class ProfilePageComponent implements OnInit { 
-
-  private subs! : Subscription;
-
+export class ProfilePageComponent implements OnInit  { 
+  
   curentUserNickname: string = '';
   currentUser: User = {
     nickname: '',
@@ -28,15 +26,15 @@ export class ProfilePageComponent implements OnInit {
     address: ''
   };
 
-  constructor(@Inject(DataExchangeService) private dataExchangeService: DataExchangeService) {
-    // this.dataExchangeService.userTransfer$
-    //  .subscribe((user) => this.currentUser = user)
+  constructor(@Inject(DataExchangeService) private dataExchangeService: DataExchangeService) 
+  {
+    
+  }
+
+  ngOnInit(): void {
+    if(this.dataExchangeService.userTransfer != null)
+      this.currentUser = this.dataExchangeService.userTransfer;
   }
   
-  ngOnInit() {
-     this.subs = this.dataExchangeService.userTransfer$
-     .subscribe((user) => this.currentUser = user)
-  }
-    
-
+        
 }
