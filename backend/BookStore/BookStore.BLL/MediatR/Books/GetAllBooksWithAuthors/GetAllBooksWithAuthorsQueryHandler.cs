@@ -15,21 +15,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookStore.BLL.MediatR.Books.GetAll
+namespace BookStore.BLL.MediatR.Books.GetAllBooksWithAuthors
 {
-    public class GetAllBooksQueryHandler : IRequestHandler<GetAllBooksQuery, Result<IEnumerable<BookDto>>>
+    public class GetAllBooksWithAuthorsQueryHandler : IRequestHandler<GetAllBooksWithAuthorsQuery, Result<IEnumerable<BookDto>>>
     {
         private readonly IRepositoryWrapper _repositoryWrapper;
 
         private readonly IMapper _mapper;
 
-        public GetAllBooksQueryHandler(IRepositoryWrapper repository, IMapper mapper)
+        public GetAllBooksWithAuthorsQueryHandler(IRepositoryWrapper repository, IMapper mapper)
         {
             _repositoryWrapper = repository;
             _mapper = mapper;
         }
 
-        public async Task<Result<IEnumerable<BookDto>>> Handle(GetAllBooksQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<BookDto>>> Handle(GetAllBooksWithAuthorsQuery request, CancellationToken cancellationToken)
         {
             try
             {                                              
@@ -37,11 +37,11 @@ namespace BookStore.BLL.MediatR.Books.GetAll
                 .Include(b => b.Book_Authors).ThenInclude(ba => ba.Author)
                 .Include(b => b.Book_Genres).ThenInclude(bg => bg.Genre);
                 
-                return Result.Ok(_mapper.Map<IEnumerable<BookDto>>(Books));
+                return FluentResults.Result.Ok(_mapper.Map<IEnumerable<BookDto>>(Books));
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));                
+                return FluentResults.Result.Fail(new Error(e.Message));                
             }
         }
     }

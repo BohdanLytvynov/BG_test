@@ -7,8 +7,11 @@ import { ValidationService } from '../../services/validation/validation.service'
 import { ValidatorBase } from '../../services/validation/validation';
 import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { AuthResponse, User } from '../../interfaces/intefaces';
 import { Subject } from 'rxjs';
+import { User } from '../../implementations/User/User';
+import { IAuthResponse } from '../../interfaces/AuthResponce/IAuthResponce';
+import { IErrorHandler } from '../../interfaces/ErrorHandler/IErrorHandler';
+import { ErrorHandler } from '../../implementations/ErrorHandler/ErrorHandler';
 
 
 
@@ -42,6 +45,8 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
   @Input() show = false;
   @Output() onChange = new EventEmitter<boolean>();
   
+errorHandler : IErrorHandler = new ErrorHandler();
+
   handleClose(value: boolean) {
     this.onChange.emit(value);
     this.sign_up_display = true;
@@ -73,7 +78,7 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
     };
            
     // action is here
-    this.dataService.registerUser<AuthResponse>(user).subscribe(
+    this.dataService.registerUser<IAuthResponse>(user).subscribe(
       (resp)  => {                  
           let u = 
           {
@@ -85,10 +90,15 @@ export class SignUpComponent extends ValidatorBase implements OnInit {
             password : ''
           };
 
-          this.dataExchange.userTransfer = u;
+          this.dataExchange.setUser(u);
           this.handleClean()        
           this.router.navigate(["/main"])                                      
-      });                          
+      },
+    err => 
+    {
+      this.dataExchange.errorTransfer = this.errorHandler.Handle(err, "Register", "/")
+      this.router.navigate(["/reg-fail"]); 
+    });                          
   };
 
   handleClean() {

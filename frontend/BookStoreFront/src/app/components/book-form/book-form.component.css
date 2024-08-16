@@ -31,3 +31,9 @@
   from {right: 0%}
   to {right: 100%;}
 }
+
+.genre-block
+{
+    margin-top: 0px;
+    margin-left: 0px;
+}

@@ -16,8 +16,6 @@ namespace BookStore.BLL.Dto.UserDto
 
         public string nickname { get; set; }       
 
-        public string surename { get; set; }
-
-        public List<string> errors { get; set; } = new List<string>();
+        public string surename { get; set; }        
     }
 }

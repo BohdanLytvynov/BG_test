@@ -1,4 +1,5 @@
-﻿using BookStore.BLL.Exceptions.AccountExceptions;
+﻿using BookStore.BLL.Dto.LogedOut;
+using BookStore.BLL.Exceptions.AccountExceptions;
 using BookStore.BLL.Services.CookieServices.Interfaces;
 using BookStore.BLL.Services.TokenServices.Interfaces;
 using BookStore.DAL.Entities;
@@ -7,6 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.JsonWebTokens;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.MediatR.Account.Logout
 {
-    public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result<string>>
+    public class LogoutCommandHandler : IRequestHandler<LogoutCommand, Result<LogedOutDto>>
     {       
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ITokenService _tokenService;
@@ -32,7 +34,7 @@ namespace BookStore.BLL.MediatR.Account.Logout
             _userManager = userManager;
         }
 
-        public async Task<Result<string>> Handle(LogoutCommand request, CancellationToken cancellationToken)
+        public async Task<Result<LogedOutDto>> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -55,13 +57,13 @@ namespace BookStore.BLL.MediatR.Account.Logout
                 user.AccessTokenIds.Remove(idToRemove);
 
                 await _userManager.UpdateAsync(user);
-
-                return Result.Ok("User loged out!");
+                
+                return FluentResults.Result.Ok(new LogedOutDto() { Message = "Loged out!" });
                     
             }
             catch (Exception e)
             {
-                return Result.Fail(e.Message);                
+                return FluentResults.Result.Fail(e.Message);                
             }
         }
     }

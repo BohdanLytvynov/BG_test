@@ -32,7 +32,7 @@ namespace BookStore.BLL.Services.CookieServices.Realizations
                         Expires = DateTimeOffset.UtcNow.AddDays(-1),
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.None
+                        SameSite = SameSiteMode.None                        
                     });
                 }
             });

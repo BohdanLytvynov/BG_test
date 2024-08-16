@@ -1,26 +1,31 @@
 <div [ngClass]="show ? 'author-form show' : 'author-form hide'">
   <div class="form">
-    <p class="form-info">Edint the author with ID: {{author.authorID}}</p>
+    <p class="form-info">Edint the author with ID: {{author.id}}</p>
     <input 
-      type="text" 
-      [(ngModel)]="author.authorName"
+      type="text" #inpName
+      [(ngModel)]="author.name"
+      (ngModelChange)="onAuthorNameChanged(inpName.value)"
       name="authorName"
       placeholder="author's name" 
-      class="form-input">
+      [ngClass]="validArray[0]? 'form-input' : 'error-input'">
+
     <input 
-      type="text" 
-      [(ngModel)]="author.authorSureName" 
+      type="text" #inpSurename
+      [(ngModel)]="author.surename" 
+      (ngModelChange)="onAuthorSurenameChanged(inpSurename.value)"
       name="authorSureName"
       placeholder="author's surename"
-      class="form-input">
+      [ngClass]="validArray[1]? 'form-input' : 'error-input'">
     <input 
-      type="text" 
-      [(ngModel)]="author.authorBirthday" 
+      type="text" #inpBirthday
+      [(ngModel)]="author.birthDate" 
+      (ngModelChange)="onAuthorBirthdayChanged(inpBirthday.value)"
       name="authorBirthday"
       placeholder="author's birthday"
-      class="form-input">
+      [ngClass]="validArray[2]? 'form-input' : 'error-input'">
     <div class="btn-box">
-      <button class="btn" (click)="editAuthor()">Submit</button>
+      <button [ngClass]="all_fields_correct? 'btn' : 'btn-disabled'" 
+      #Submit (click)="editAuthor()">Submit</button>
     </div>
   </div>
   <button class="closeBtn" (click)="handleClose(false)"></button>

@@ -20,5 +20,6 @@ namespace BookStore.BLL.Mapping.Genres
                 .ForSourceMember(x => x.Book_Geners, conf => conf.DoNotValidate())
                 .ReverseMap();
         }
+
     }
 }

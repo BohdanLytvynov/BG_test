@@ -24,22 +24,17 @@ namespace BookStore.DAL.Migrations
 
             modelBuilder.Entity("BookStore.DAL.Entities.AccessTokenId", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasColumnName("access_token_guid_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AccessTokenGUID")
                         .HasColumnType("UUID");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uuid");
+                    b.Property<DateTime>("ExpDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("access_token_expiration");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
+                    b.HasKey("UserId", "AccessTokenGUID");
 
                     b.ToTable("AccessTokenId");
                 });

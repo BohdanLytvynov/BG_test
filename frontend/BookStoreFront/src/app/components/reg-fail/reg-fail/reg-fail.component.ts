@@ -2,7 +2,8 @@ import { Component, inject, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { map, Observable, Subject, Subscription } from 'rxjs';
 import { DataExchangeService } from '../../../services/data-exchange/data-exchange.service';
-import { ReqError } from '../../../interfaces/intefaces';
+import { IReqError } from '../../../interfaces/ReqError/IReqError';
+import { ReqError } from '../../../implementations/ReqError/ReqError';
 
 
 @Component({
@@ -13,7 +14,7 @@ import { ReqError } from '../../../interfaces/intefaces';
   styleUrl: './reg-fail.component.css'
 })
 export class RegFailComponent implements OnInit {
-  error! : ReqError;
+  error : ReqError = { action: '', error : '', route : '' };
   sub! : Subscription    
 
   constructor( private route: Router,
@@ -29,6 +30,6 @@ export class RegFailComponent implements OnInit {
         
   backToRegister()
   {
-    this.route.navigate(['/start']);
+    this.route.navigate([this.error.route]);
   }      
 }

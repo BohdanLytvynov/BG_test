@@ -59,15 +59,10 @@ namespace BookStore.BLL.Services.TokenServices.Realizations
             {
                 throw new ArgumentNullException("Roles for User not found!");
             }
-
-            var creation = DateTime.UtcNow;
-            var expiration = creation.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
-
+            
             List<Claim> claims = new()
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),//User Id            
-            new Claim(JwtRegisteredClaimNames.Iat, creation.ToString(CultureInfo.InvariantCulture)),
-            new Claim(JwtRegisteredClaimNames.Exp, expiration.ToString(CultureInfo.InvariantCulture)),//Date of generation                                                                                                     
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),//User Id                                                                                                                                         
             new Claim(ClaimTypes.Role, roles.First())//Role
         };
 

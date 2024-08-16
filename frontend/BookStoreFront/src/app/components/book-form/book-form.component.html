@@ -1,34 +1,31 @@
 <div [ngClass]="show ? 'books-form show' : 'books-form hide'">
   <div class="form">    
-    <input 
+    <input #inpName
       type="text" 
       [(ngModel)]="bookName"
+      (ngModelChange)="onBookNameChange(inpName.value)"
       name="bookName"
       placeholder="book title" 
-      class="form-input">
-    <input 
+      [ngClass]="validArray[0]? 'form-input' : 'error-input'">
+    <input #inpYear
       type="text" 
       [(ngModel)]="bookYear" 
+      (ngModelChange)="onBookYearChange(inpYear.value)"
       name="bookYear"
       placeholder="year"
-      class="form-input">
-    <input 
+      [ngClass]="validArray[1]? 'form-input' : 'error-input'">
+         
+      <input #inpGenres
       type="text" 
       [(ngModel)]="bookGenre" 
-      name="bookGenre"
-      placeholder="genre"
-      class="form-input">
-
-    <button class="btn">
-
-    </button>
-
-    <button class="btn">
-
-    </button>
+      (ngModelChange)="onBookGenreChanged(inpGenres.value)"      
+      name="bookGenres"
+      placeholder="Format of input: genre1,genre2"
+      [ngClass]="validArray[2]? 'form-input' : 'error-input'">
 
     <div class="btn-box">
-      <button class="btn" (click)="addBook()">Add the Book</button>
+      <button [ngClass]="all_fields_correct? 'btn':'btn-disabled'" 
+      (click)="addBook()" #Submit >Add the Book</button>
       <button class="btn" (click)="handleClean()">Clean</button>
     </div>
   </div>

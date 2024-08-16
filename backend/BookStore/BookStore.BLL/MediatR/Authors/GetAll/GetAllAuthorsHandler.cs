@@ -21,9 +21,17 @@ namespace BookStore.BLL.MediatR.Authors.GetAll
 
         public async Task<Result<IEnumerable<AuthorDto>>> Handle(GetAllAuthorsQuery request, CancellationToken cancellationToken)
         {
-            var authors = await _repositoryWrapper.AuthorRepository.GetAllAsync();
+            try
+            {
+                var authors = await _repositoryWrapper.AuthorRepository.GetAllAsync();
+
+                return FluentResults.Result.Ok(_mapper.Map<IEnumerable<AuthorDto>>(authors));
+            }
+            catch (Exception e)
+            {
+                return FluentResults.Result.Fail(new Error(e.Message));                
+            }
             
-            return Result.Ok(_mapper.Map<IEnumerable<AuthorDto>>(authors));
         }
     }
 }

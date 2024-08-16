@@ -13,18 +13,17 @@ namespace BookStore.DAL.Persistence.Configurations.AccessTokenIds
     {
         public void Configure(EntityTypeBuilder<AccessTokenId> builder)
         {
-            builder.HasKey(x => x.Id);
-
-            builder.Property(x => x.Id)
-                .UseIdentityColumn()
-                .HasColumnName("access_token_guid_id");
-
+            builder.HasKey(x => new { x.UserId, x.AccessTokenGUID });
+            
             builder.Property(x => x.AccessTokenGUID)
                 .IsRequired().HasColumnType("UUID");
 
             builder.HasOne(x => x.User)
                 .WithMany(x => x.AccessTokenIds)
                 .HasForeignKey(fk => fk.UserId);
+
+            builder.Property(x => x.ExpDate)
+                .IsRequired().HasColumnName("access_token_expiration");                
         }
     }
 }

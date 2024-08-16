@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.MediatR.Books.GetAll
 {
-    public record GetAllBooksQuery : IRequest<Result<IEnumerable<BookDto>>>
+    public class GetAllBooksQuery : IRequest<Result<IEnumerable<SimpleBookDto>>>
     {
     }
 }

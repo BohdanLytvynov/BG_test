@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 namespace BookStore.DAL.Entities
 {
     public class AccessTokenId
-    {
-        public int Id { get; set; }
-
+    {       
         public Guid AccessTokenGUID { get; set; }
+
+        public DateTime ExpDate { get; set; }// The date when token Id will expire, need to clean up this records
 
         #region Navigation Properties
 

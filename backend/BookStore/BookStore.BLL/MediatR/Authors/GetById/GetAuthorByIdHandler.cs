@@ -35,11 +35,11 @@ namespace BookStore.BLL.MediatR.Authors.GetById
 
                 if (a == null)
                     throw new Exception($"Unable to find element with Id: {request.id}");
-                return Result.Ok(_mapper.Map<AuthorDto>(a));
+                return FluentResults.Result.Ok(_mapper.Map<AuthorDto>(a));
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));                
+                return FluentResults.Result.Fail(new Error(e.Message));                
             }
         }
     }

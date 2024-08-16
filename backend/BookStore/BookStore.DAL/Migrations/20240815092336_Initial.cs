@@ -128,14 +128,13 @@ namespace BookStore.DAL.Migrations
                 name: "AccessTokenId",
                 columns: table => new
                 {
-                    access_token_guid_id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     AccessTokenGUID = table.Column<Guid>(type: "UUID", nullable: false),
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false)
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    access_token_expiration = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AccessTokenId", x => x.access_token_guid_id);
+                    table.PrimaryKey("PK_AccessTokenId", x => new { x.UserId, x.AccessTokenGUID });
                     table.ForeignKey(
                         name: "FK_AccessTokenId_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -282,11 +281,6 @@ namespace BookStore.DAL.Migrations
                         principalColumn: "genre_id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_AccessTokenId_UserId",
-                table: "AccessTokenId",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",

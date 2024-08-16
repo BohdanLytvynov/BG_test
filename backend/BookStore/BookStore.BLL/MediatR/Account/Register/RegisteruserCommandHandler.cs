@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookStore.BLL.Converters;
 using BookStore.BLL.Dto.UserDto;
 using BookStore.BLL.Exceptions.AccountExceptions;
 using BookStore.BLL.Extensions;
@@ -15,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -32,6 +34,8 @@ namespace BookStore.BLL.MediatR.Account.Register
         private readonly ICookieService _cookieService;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        private readonly DateTimeToDateTimeOffsetConverter _toDateTimeOffsetConverter;
+
         public RegisteruserCommandHandler(
             UserManager<User> userManager,
             JWTTokenConfiguration tokenConfiguration,
@@ -46,6 +50,7 @@ namespace BookStore.BLL.MediatR.Account.Register
             _cookieService = cookieService;
             _contextAccessor = httpContextAccessor;
             _tokensConfiguration = tokenConfiguration;
+            _toDateTimeOffsetConverter = new DateTimeToDateTimeOffsetConverter();
         }
 
         public async Task<Result<AuthResponseDto>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -65,7 +70,11 @@ namespace BookStore.BLL.MediatR.Account.Register
                 if (userExists is not null)
                     throw new LoginIsAlreadyInUseException();
 
-                user.AccessTokenIds.Add(new AccessTokenId() { AccessTokenGUID = TokenId, User = user });
+                var creation = DateTime.UtcNow;
+                var expiration = creation.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes);
+
+                user.AccessTokenIds.Add(new AccessTokenId() 
+                { AccessTokenGUID = TokenId, User = user, ExpDate = expiration });
 
                 //Create User
                 var r = await _userManager.CreateAsync(user, request.dto.password);
@@ -81,11 +90,17 @@ namespace BookStore.BLL.MediatR.Account.Register
                 {
                     throw new IdentityException(r.GetErrors());
                 }
-
+               
                 //Generate JWT Access Token
                 var tokenDto = await _tokenService.GenerateAccesToken(user, claims =>
                 {
-                    claims.Add(new Claim(JwtRegisteredClaimNames.Jti, TokenId.ToString()));
+                    claims.Add(new Claim(JwtRegisteredClaimNames.Jti,
+                        TokenId.ToString())); //Special token Id
+                    claims.Add(new Claim(JwtRegisteredClaimNames.Exp,
+                        expiration.ToString(CultureInfo.InvariantCulture))); //Date of token's expiration
+                    claims.Add(new Claim(JwtRegisteredClaimNames.Iat,      
+                        creation.ToString(CultureInfo.InvariantCulture))); //Date of token's generation
+
                 });
 
                 if (tokenDto is null)
@@ -97,7 +112,7 @@ namespace BookStore.BLL.MediatR.Account.Register
                     _contextAccessor!.HttpContext!.Response,
                     ("accessToken", tokenDto.AccessToken, new CookieOptions
                     {
-                        Expires = DateTimeOffset.UtcNow.AddMinutes(_tokensConfiguration.AccessTokenExpirationMinutes),
+                        Expires = _toDateTimeOffsetConverter.Convert(expiration, null),
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Strict,
@@ -108,12 +123,12 @@ namespace BookStore.BLL.MediatR.Account.Register
 
                 var responce = _mapper.Map<AuthResponseDto>(user);
                 
-                return Result.Ok(responce);
+                return FluentResults.Result.Ok(responce);
 
             }            
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));
+                return FluentResults.Result.Fail(new Error(e.Message));
             }
         }
     }

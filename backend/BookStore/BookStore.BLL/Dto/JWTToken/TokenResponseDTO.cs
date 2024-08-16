@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.Dto.JWTToken
 {
-    public  class TokenResponseDTO
+    public class TokenResponseDTO
     {
         public string AccessToken { get; set; } = string.Empty;
+
+        public DateTime ExpDate { get; set; }
     }
 }

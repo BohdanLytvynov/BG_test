@@ -1,4 +1,4 @@
-﻿using BookStore.BLL.MediatR.ResultVariations;
+﻿using BookStore.BLL.MediatR.Result;
 using FluentResults;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
