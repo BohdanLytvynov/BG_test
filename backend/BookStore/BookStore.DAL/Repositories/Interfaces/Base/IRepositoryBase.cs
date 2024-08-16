@@ -17,11 +17,11 @@ namespace BookStore.DAL.Repositories.Interfaces.Base
 
         void Edit(T entity);
 
-        Task<IEnumerable<T>> GetAllAsync(
+        Task<IQueryable<T>> GetAllAsync(
         Expression<Func<T, bool>>? predicate = default,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default);
 
-        Task<IEnumerable<T>?> GetAllAsync(
+        Task<IQueryable<T>> GetAllAsync(
             Expression<Func<T, T>> selector,
             Expression<Func<T, bool>>? predicate = default,
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default);
@@ -38,5 +38,10 @@ namespace BookStore.DAL.Repositories.Interfaces.Base
             Expression<Func<T, T>> selector,
             Expression<Func<T, bool>>? predicate = default,
             Func<IQueryable<T>, IIncludableQueryable<T, object>>? include = default);
+
+        Task<IQueryable<TDbSet>> GetQueryableSet<TDbSet>(Expression<Func<TDbSet, bool>>? predicate = default,
+        Func<IQueryable<TDbSet>, IIncludableQueryable<TDbSet, object>>? include = default,
+        Expression<Func<TDbSet, TDbSet>>? selector = default)
+            where TDbSet : class;
     }
 }

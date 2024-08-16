@@ -29,16 +29,7 @@ namespace BookStore.DAL.Persistence.Configurations.Books
             builder.Property(x => x.PubYear)
                 .IsRequired()
                 .HasColumnType("SMALLINT")
-                .HasColumnName("publication_year");
-
-            builder.HasMany(x => x.Book_Genres).WithOne(x => x.Book)
-                .HasForeignKey(x => x.BookId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            builder.HasMany(x => x.Book_Authors)
-                .WithOne(x => x.Book)
-                .HasForeignKey(x =>x.BookId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasColumnName("publication_year");                 
         }
     }
 }

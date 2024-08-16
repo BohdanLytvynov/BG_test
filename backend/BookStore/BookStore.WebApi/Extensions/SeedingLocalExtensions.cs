@@ -1,6 +1,7 @@
 ﻿using BookStore.DAL.Entities;
 using BookStore.DAL.Enums;
 using BookStore.DAL.Persistence;
+using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -37,11 +38,15 @@ namespace BookStore.WebApi.Extensions
 
             if (!db.Generes.Any())
             {
-                await db.Generes.AddAsync
+                await db.Generes.AddRangeAsync
                     (
                         new Genre()
                         { 
                             Name = "Scientific Literature"                            
+                        },
+                        new Genre()
+                        { 
+                            Name = "Fiction Literature"
                         }
                     );
 
@@ -50,6 +55,7 @@ namespace BookStore.WebApi.Extensions
 
             if (!db!.Authors.Any())
             {
+                //Add Jeffery Richner Books
                 var genre = db.Generes.FirstOrDefault(x =>x.Name.Equals("Scientific Literature"));
 
                 var Books = new List<Book>()
@@ -88,7 +94,54 @@ namespace BookStore.WebApi.Extensions
                 } 
 
                 await db.SaveChangesAsync();
+
+                //Add Kristian Hannah Books 
+                genre = db.Generes.FirstOrDefault(x => x.Name.Equals("Fiction Literature"));
+
+                Books = new List<Book>()
+                {
+                    new Book()
+                        {
+                            Name="The 4 Winds",
+                            PubYear=2021
+                        },
+                        new Book()
+                        {
+                            Name = "The Greate Alone",
+                            PubYear = 2023
+                        },                        
+                };
+
+                a = new Author()
+                {
+                    Name = "Kristin",
+                    Surename = "Hannah",
+                    BirthDate = new DateOnly(2002, 9, 24)
+                };
+
+                foreach (var book in Books)
+                {
+                    book.Book_Genres.Add(new Book_Genre() { Book = book, Genre = genre });
+
+                    a.Book_Authors.Add(new Book_Author() { Author = a, Book = book });
+
+                    await db.Authors.AddAsync(a);
+                }
+
+                await db.SaveChangesAsync();
             }
+
+            //var bookrepo = serviceProvider.GetService<IRepositoryWrapper>()!.BookRepository;
+
+            //await bookrepo.AddBook(
+            //    new Book() { Name = "How Do Things Work", PubYear=2021 },
+            //    new List<Author>() { new Author() { Name = "Loui", Surename = "Blumfield", 
+            //        BirthDate= new DateOnly(1990, 02, 23)} },
+            //    new List<Genre>()
+            //    { new Genre() { Name = "Scientific Literature" }, new Genre() { Name = "Physics" } }
+            //    );
+
+            await db.SaveChangesAsync();
         }
 
         private async static Task SeedIdentity(IServiceProvider serviceProvider)
@@ -140,7 +193,9 @@ namespace BookStore.WebApi.Extensions
                             Id = Guid.Parse(adminId),
                             EmailConfirmed = true,
                             Address = "Some address",
-                            BirthDate = new DateOnly(2002, 9, 12)
+                            BirthDate = new DateOnly(2002, 9, 12),
+                            Name = "AdminName",
+                            Surename = "AdminSurename"
 
                         }, adminPass);
                 }

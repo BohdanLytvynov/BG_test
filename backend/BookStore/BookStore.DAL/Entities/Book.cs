@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.DAL.Entities
 {
-    public class Book
+    public class Book : IEquatable<Book>
     {
         public int Id { get; set; }
 
@@ -23,6 +23,12 @@ namespace BookStore.DAL.Entities
         #region Genre Navigation Properties
 
         public List<Book_Genre>? Book_Genres { get; set; } = new();
+
+        public bool Equals(Book? other)
+        {
+            return Name.Equals(other.Name) &&
+                PubYear.Equals(other.PubYear);
+        }
 
         #endregion
     }

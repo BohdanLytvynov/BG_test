@@ -22,6 +22,28 @@ namespace BookStore.DAL.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("BookStore.DAL.Entities.AccessTokenId", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("access_token_guid_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("AccessTokenGUID")
+                        .HasColumnType("UUID");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AccessTokenId");
+                });
+
             modelBuilder.Entity("BookStore.DAL.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
@@ -159,6 +181,12 @@ namespace BookStore.DAL.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)")
+                        .HasColumnName("user_firstname");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
@@ -178,6 +206,12 @@ namespace BookStore.DAL.Migrations
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("text");
+
+                    b.Property<string>("Surename")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("VARCHAR(50)")
+                        .HasColumnName("user_lastname");
 
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean");
@@ -328,6 +362,17 @@ namespace BookStore.DAL.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("BookStore.DAL.Entities.AccessTokenId", b =>
+                {
+                    b.HasOne("BookStore.DAL.Entities.User", "User")
+                        .WithMany("AccessTokenIds")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("BookStore.DAL.Entities.Book_Author", b =>
                 {
                     b.HasOne("BookStore.DAL.Entities.Author", "Author")
@@ -432,6 +477,11 @@ namespace BookStore.DAL.Migrations
             modelBuilder.Entity("BookStore.DAL.Entities.Genre", b =>
                 {
                     b.Navigation("Book_Geners");
+                });
+
+            modelBuilder.Entity("BookStore.DAL.Entities.User", b =>
+                {
+                    b.Navigation("AccessTokenIds");
                 });
 #pragma warning restore 612, 618
         }

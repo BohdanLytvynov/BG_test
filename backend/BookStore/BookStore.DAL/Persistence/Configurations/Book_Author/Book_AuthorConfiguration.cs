@@ -16,6 +16,14 @@ namespace BookStore.DAL.Persistence.Configurations.Book_Authors
             builder.ToTable("Book_Authors", "bookStore");
 
             builder.HasKey(x => new { x.BookId, x.AuthorId });
+
+            builder.HasOne(ba => ba.Book)
+                .WithMany(b => b.Book_Authors)
+                .HasForeignKey(fk => fk.BookId);
+
+            builder.HasOne(ba => ba.Author)
+                .WithMany(a => a.Book_Authors)
+                .HasForeignKey(fk => fk.AuthorId);
         }
     }
 }

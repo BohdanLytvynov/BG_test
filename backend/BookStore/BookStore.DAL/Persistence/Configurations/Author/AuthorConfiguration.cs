@@ -36,12 +36,7 @@ namespace BookStore.DAL.Persistence.Configurations.Authors
             builder.Property(x => x.BirthDate)
                 .IsRequired()
                 .HasColumnType("DATE")
-                .HasColumnName("author_birth_date");
-
-            builder.HasMany(x => x.Book_Authors)
-                .WithOne(x => x.Author)
-                .HasForeignKey(x =>x.AuthorId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasColumnName("author_birth_date");            
         }
     }
 }
