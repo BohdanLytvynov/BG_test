@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookStore.BLL.Dto.Author;
 using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using FluentResults;
 using MediatR;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.MediatR.Authors.Delete
 {
-    public class DeleteAuthorCommandHandler : IRequestHandler<DeleteAuthorCommand, Result<bool>>
+    public class DeleteAuthorCommandHandler : IRequestHandler<DeleteAuthorCommand, Result<DeleteAuthorDto>>
     {
         private readonly IMapper _mapper;
 
@@ -24,7 +25,7 @@ namespace BookStore.BLL.MediatR.Authors.Delete
             _mapper = mapper;
         }
 
-        public async Task<Result<bool>> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
+        public async Task<Result<DeleteAuthorDto>> Handle(DeleteAuthorCommand request, CancellationToken cancellationToken)
         {
             try
             {
@@ -38,12 +39,12 @@ namespace BookStore.BLL.MediatR.Authors.Delete
                 repo.Delete(a);
 
                 if (await _repository.SaveChangesAsync() > 0)
-                    return Result.Ok(true);
+                    return FluentResults.Result.Ok(new DeleteAuthorDto() { Id = request.id });
                 throw new Exception("Error when trying to Execute delete script for Author!");
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));                
+                return FluentResults.Result.Fail(new Error(e.Message));                
             }
         }
     }

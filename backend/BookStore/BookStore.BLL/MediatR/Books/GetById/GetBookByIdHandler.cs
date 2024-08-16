@@ -55,11 +55,11 @@ namespace BookStore.BLL.MediatR.Books.GetById
                     }
                     ).FirstOrDefaultAsync(f => f.Id == request.id);
 
-                return Result.Ok(temp);
+                return FluentResults.Result.Ok<BookDto>(temp);
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));
+                return FluentResults.Result.Fail(new Error(e.Message));
             }
         }
     }

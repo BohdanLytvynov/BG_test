@@ -9,13 +9,11 @@ namespace BookStore.BLL.MediatR.Books.Create
 {
     internal class CreateBookCommandDtoValidator : AbstractValidator<CreateBookCommand>
     {
-        public CreateBookCommandDtoValidator() 
+        public CreateBookCommandDtoValidator()
         {
-            RuleFor(x => x.Dto.Name)
-                .NotEmpty();
-            RuleFor(x => x.Dto.PubYear)
-                .NotEmpty()
-                .Must(x => x > 0);
+            RuleFor(x => x.dto.Name).NotNull();
+            RuleFor(x => x.dto.PubYear).NotNull().Must(x => int.TryParse(x.ToString(), out var v));
+            RuleFor(x => x.dto.Geners).NotNull().Must(x => x.Count > 0);
         }
     }
 }

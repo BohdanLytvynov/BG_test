@@ -6,10 +6,10 @@
     </button>
   </div>
   <div class="items-list">
-    @for (item of items; track $index) {
+    @for (item of DataExchange.getAllBooks(); track $index) {
       <div class="card">
         <div class="card-info">
-          <p>Book's ID: {{item.id}}</p>
+          <p>Book's ID: {{$index + 1}}</p>
           <p>Title: {{item.name}}</p>
           <p>Year of publication: {{item.pubYear}}</p>
           <p class="p-bold">Genres:</p>
@@ -35,7 +35,7 @@
   </app-book-form>
 }
 @if(bookEditForm) {
-  <app-book-edit-form
+  <app-book-edit-form (onInit)="editFormInitialized()"
     [show]="showBookEditForm" 
     [id]="currentID" 
     (onChange)="hideBookEditFormComponent()">

@@ -10,5 +10,5 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.MediatR.Authors.Create
 {
-    public record CreateAuthorCommand(CreateAuthorDto dto) : IValidatableRequest<Result<bool>>;    
+    public record CreateAuthorCommand(AuthorDto dto) : IValidatableRequest<Result<AuthorDto>>;    
 }

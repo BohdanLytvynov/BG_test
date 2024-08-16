@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace BookStore.BLL.MediatR.ResultVariations
+namespace BookStore.BLL.MediatR.Result
 {
     public class NullResult<T> : Result<T>
     {

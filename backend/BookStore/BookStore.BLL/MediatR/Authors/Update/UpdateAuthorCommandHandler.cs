@@ -32,12 +32,12 @@ namespace BookStore.BLL.MediatR.Authors.Update
                 repo.Edit(_mapper.Map<Author>(request.dto));
 
                 if (await _repositoryWrapper.SaveChangesAsync() > 0)
-                    return Result.Ok(true);
+                    return FluentResults.Result.Ok(true);
                 throw new Exception("Fail to Execute UPDATE script");
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));               
+                return FluentResults.Result.Fail(new Error(e.Message));               
             }
         }
     }

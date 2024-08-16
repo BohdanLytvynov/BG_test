@@ -15,6 +15,8 @@ using BookStore.BLL.Services.CookieServices.Interfaces;
 using BookStore.BLL.Services.TokenServices.Interfaces;
 using BookStore.BLL.Services.TokenServices.Realizations;
 using BookStore.WebApi.MiddleWares;
+using BookStore.BLL.Services.AccessTokenCleaner.Interfaces;
+using BookStore.BLL.Services.AccessTokenCleaner.Realizations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +45,9 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>(conf =>
 
  }).AddEntityFrameworkStores<BookStoreDbContext>()
  .AddDefaultTokenProviders();
+
+// Add Cleaner Service
+builder.Services.AddSingleton<ICleaner, AccessTokenCleaner>();
 
 //Add Repository Wrapper as a Service
 

@@ -1,31 +1,32 @@
 <div [ngClass]="show ? 'author-form show' : 'author-form hide'">
-  <div class="form">
-    <input 
-      type="text" 
-      [(ngModel)]="authorID" 
-      name="authorID"
-      placeholder="identifier" 
-      class="form-input">
-    <input 
+  <div class="form">    
+    <input #inpName
       type="text" 
       [(ngModel)]="authorName"
+      (ngModelChange)="onNameChanged(inpName.value)"
       name="authorName"
       placeholder="author's name" 
-      class="form-input">
-    <input 
+      [ngClass]="validArray[0]? 'form-input' : 'error-input'">
+
+    <input #inpSurename
       type="text" 
       [(ngModel)]="authorSureName" 
+      (ngModelChange)="onSureNamwChanged(inpSurename.value)"
       name="authorSureName"
       placeholder="author's surename"
-      class="form-input">
-    <input 
+      [ngClass]="validArray[1]? 'form-input' : 'error-input'">
+
+    <input #inpBirthday
       type="text" 
       [(ngModel)]="authorBirthday" 
+      (ngModelChange)="onBirthdayChanged(inpBirthday.value)"
       name="authorBirthday"
       placeholder="author's birthday"
-      class="form-input">
+      [ngClass]="validArray[2]? 'form-input' : 'error-input'">
+
     <div class="btn-box">
-      <button class="btn" (click)="addAuthor()">Add the Book</button>
+      <button #SubmitButton (click)="addAuthor()"
+      [ngClass]="all_fields_correct? 'btn' : 'btn-disabled'">Add the Author</button>
       <button class="btn" (click)="handleClean()">Clean</button>
     </div>
   </div>

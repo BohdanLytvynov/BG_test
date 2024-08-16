@@ -193,10 +193,28 @@ p {
 .error-msg
 {
   color: red;
-  font-size: 16px;  
+  font-size: 20px;  
 }
 
 a:hover
 {
   cursor: pointer;
+}
+
+.err-msg-margin
+{
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+
+.ul-book {
+  padding-left: 1rem;
+  padding-top: 1px;
+}
+
+.p-bold
+{
+  font-weight: bold;
+  color: darkgreen;
+  font-size: 16px;
 }

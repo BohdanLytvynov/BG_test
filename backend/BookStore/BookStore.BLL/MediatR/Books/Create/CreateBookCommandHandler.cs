@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using AutoMapper.Configuration.Annotations;
+using BookStore.BLL.Dto.Book;
 using BookStore.DAL.Entities;
 using BookStore.DAL.Repositories.Interfaces.RepositoryWrapper;
 using FluentResults;
@@ -12,41 +12,44 @@ using System.Threading.Tasks;
 
 namespace BookStore.BLL.MediatR.Books.Create
 {
-    public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, Result<bool>>
+    public class CreateBookCommandHandler : IRequestHandler<CreateBookCommand, Result<SimpleBookDto>>
     {
-        IRepositoryWrapper _repositoryWrapper;
+        private readonly IRepositoryWrapper _repositoryWrapper;
+        private readonly IMapper _mapper;
 
-        IMapper _mapper;
-
-        public CreateBookCommandHandler(IRepositoryWrapper repositoryWrapper, IMapper mapper)
+        public CreateBookCommandHandler(IRepositoryWrapper repositoryWrapper,
+            IMapper mapper)
         {
             _repositoryWrapper = repositoryWrapper;
-
             _mapper = mapper;
         }
 
-        public async Task<Result<bool>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
+        public async Task<Result<SimpleBookDto>> Handle(CreateBookCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var bookRepo = _repositoryWrapper.BookRepository;
+                var repo = _repositoryWrapper.BookRepository;
 
-                bookRepo.AddBook(new Book()
-                { 
-                    Name = request.Dto.Name,
-                    PubYear = request.Dto.PubYear,                    
-                }, _mapper.Map<IEnumerable<Author>>(request.Dto.Authors),
-                    _mapper.Map<IEnumerable<Genre>>(request.Dto.Genres));
+                var book = _mapper.Map<Book>(request.dto);
+
+                var genres = _mapper.Map<IEnumerable<Genre>>(request.dto.Geners);
+
+                await repo.AddBook(book, null, genres);
 
                 if (await _repositoryWrapper.SaveChangesAsync() > 0)
                 {
-                    return Result.Ok(true);
+                    var dto = _mapper.Map<SimpleBookDto>(book);
+
+                    dto.Geners = request.dto.Geners;
+
+                    return FluentResults.Result.Ok(dto);
                 }
-                throw new Exception("Something goes wrong when trying to save new Book!");
+                else
+                    throw new Exception("Fail to add new User!");
             }
             catch (Exception e)
             {
-                return Result.Fail(new Error(e.Message));               
+                return FluentResults.Result.Fail(new Error(e.Message));
             }
         }
     }

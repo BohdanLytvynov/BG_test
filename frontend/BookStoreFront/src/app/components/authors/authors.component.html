@@ -6,23 +6,23 @@
     </button>
   </div>
   <div class="items-list">
-    @for (item of items; track $index) {
+    @for (item of DataExchange.getAllAuthors(); track $index) {
       <div class="card">
         <div class="card-info">
-          <p>Author's ID: {{item.authorID}}</p>
-          <p>Name: {{item.authorName}}</p>
-          <p>Surname: {{item.authorSureName}}</p>
-          <p>Birthday: {{item.authorBirthday}}</p>
+          <p>Author's ID: {{$index + 1}}</p>
+          <p>Name: {{item.name}}</p>
+          <p>Surname: {{item.surename}}</p>
+          <p>Birthday: {{item.birthDate}}</p>
         </div>
         <div class="card-btn-box">
           <button 
             class="btn" 
-            (click)="showAuthorEditFormComponent(item.authorID)">
+            (click)="showAuthorEditFormComponent(item.id)">
             Edit Info
           </button>
           <button 
             class="btn" 
-            (click)="deleteAuthor(item.authorID)">
+            (click)="deleteAuthor(item.id)">
             Delete
           </button>
         </div>

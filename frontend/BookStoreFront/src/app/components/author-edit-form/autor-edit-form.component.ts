@@ -1,16 +1,14 @@
 import { NgClass } from '@angular/common';
-import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Inject, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataService } from '../../services/data-service/data.service';
-
-class Author {
-  constructor(
-    public authorID: string,
-    public authorName: string,
-    public authorSureName: string,
-    public authorBirthday: string
-  ) {}
-}
+import { ValidationService } from '../../services/validation/validation.service';
+import { ValidatorBase } from '../../services/validation/validation';
+import { DataExchangeService } from '../../services/data-exchange/data-exchange.service';
+import { Author } from '../../implementations/Author/Author';
+import { Router } from '@angular/router';
+import { IErrorHandler } from '../../interfaces/ErrorHandler/IErrorHandler';
+import { ErrorHandler } from '../../implementations/ErrorHandler/ErrorHandler';
 
 @Component({
   selector: 'app-autor-edit-form',
@@ -20,40 +18,95 @@ class Author {
   templateUrl: './autor-edit-form.component.html',
   styleUrl: './autor-edit-form.component.css'
 })
-export class AutorEditFormComponent {
+export class AutorEditFormComponent extends ValidatorBase implements OnInit {
 
-  constructor(@Inject(DataService) private dataService: DataService) {};
+  constructor(@Inject(DataService) private dataService: DataService,
+@Inject(ValidationService) private validation : ValidationService,
+@Inject(DataExchangeService) private dataExchange : DataExchangeService,
+@Inject(Router) private router : Router)   
+ {
+    super();
+ }
 
   @Input() show = false;
   @Output() onChange = new EventEmitter<boolean>();
-
-  @Input() id = '';
+  @ViewChild('Submit', { static: false }) Submit! : ElementRef
+  @Output() onInit = new EventEmitter();
+  @Input() id : number = 0;
 
   handleClose(value: boolean) {
     this.onChange.emit(value)
   };
 
   author: Author  = {
-    authorID: '',
-    authorName: '',
-    authorSureName: '',
-    authorBirthday: ''
+    id: -1,
+    name: '',
+    surename: '',
+    birthDate: ''
   };
 
-  ngOnInit() {
-    this.author = this.dataService.getAuthorByID(this.id);
-  }
+  all_fields_correct : boolean = true;
 
-  ngOnChanges() {
-    this.author = this.dataService.getAuthorByID(this.id);
-  }
+  errorHandler : IErrorHandler = new ErrorHandler();
 
+  ngOnInit() { 
+    this.Init(3)
+    this.author = this.dataExchange.getAuthorById(this.id)!; 
+    this.validArray.fill(true);    
+       
+    this.dataExchange.EditBook.subscribe(
+      (id) => { this.author = this.dataExchange.getAuthorById(id)!         
+      })
+
+      this.onInit.emit();
+  }
+  
   editAuthor() {
-
-    // action is here
-    console.log(this.author)
+    if(!this.all_fields_correct)
+      return;
+   
+    this.dataService.editAuthor(this.author)
+    .subscribe( resp =>
+    {
+      if(resp["message"] == "Unauthorized")
+        {
+          this.dataExchange.errorTransfer = { error: resp["message"], 
+            action : 'Edit book', route:"/" }
+          this.router.navigate(["/reg-fail"]);
+        }
+        else
+        {            
+          this.dataExchange.editAuthor(resp as Author);
+        }
+      },
+        err => {
+          this.dataExchange.errorTransfer = this.errorHandler
+          .Handle(err, `Edit Author`, "/main");
+          this.router.navigate(["/reg-fail"]);
+    });
 
     this.handleClose(false)
   };
+
+  onAuthorNameChanged(value : string)
+  {
+      this.validArray[0] = this.validation.ValidateText(value);
+      this.all_fields_correct = this.CheckValidArray()
+      this.enableElement(this.all_fields_correct, this.Submit);
+  }
+
+  onAuthorSurenameChanged(value : string)
+  {
+    this.validArray[1] = this.validation.ValidateText(value);
+      this.all_fields_correct = this.CheckValidArray()
+      this.enableElement(this.all_fields_correct, this.Submit);
+  }
+
+  onAuthorBirthdayChanged(value : string)
+  {
+    this.validArray[2] = this.validation.ValidateDate(value);
+      this.all_fields_correct = this.CheckValidArray()
+      this.enableElement(this.all_fields_correct, this.Submit);
+  }
 
 }
