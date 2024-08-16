@@ -4,12 +4,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ValidationService {
-
-
   
   constructor() { }
 
-  textField : RegExp = /([A-Z]{1}[a-z]{0,}[^0-9]{0,}\s{0,})/;   
+  Name_textField : RegExp = /([A-Z]{1}[a-z]{0,}[^0-9]{0,}\s{0,})/;  
+  sequence : RegExp = new RegExp(/[A-Z]{0,}[a-z,][^\s]{0,}/g); 
+  number : RegExp = /([\d]{4,})/;
 
   ValidateText(value: string) : boolean
   {
@@ -18,7 +18,7 @@ export class ValidationService {
         return false;
       }
 
-    let res = this.textField.test(value);
+    let res = this.Name_textField.test(value);
 
     console.log(res);
 
@@ -61,6 +61,22 @@ export class ValidationService {
     arr[2].length == 2 &&
     year > 0 && month > 0 && month <= 12 &&
     day > 0 && day <= 31;
+  }
+
+  ValidateNumber(value : string) : boolean
+  {
+    if(!this.ValidateTextNotEmpty(value))
+      return false;
+    
+    let n = Number(value);
+    return !Number.isNaN(n);
+  }
+
+  VaidateSequence(value : string) : boolean
+  {
+    if(!this.ValidateTextNotEmpty(value))
+      return false;    
+    return this.sequence.test(value);
   }
 
 }

@@ -9,6 +9,11 @@ export abstract class ValidatorBase
       this.validArray = Array(count).fill(false); 
     }
 
+ResetValidArray()
+{
+    this.validArray.fill(false);
+}
+
   CheckValidArray() : boolean
   {
     for(let i = 0; i < this.validArray.length; i++)
